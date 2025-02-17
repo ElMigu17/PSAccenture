@@ -1,4 +1,7 @@
 package com.fornempr.demo.repositories;
 
-public class EmpresaRepository {
-}
+import com.fornempr.demo.entities.Empresa;
+
+import java.util.Optional;
+
+public interface EmpresaRepository extends CrudRepository<Empresa, Integer> { }
