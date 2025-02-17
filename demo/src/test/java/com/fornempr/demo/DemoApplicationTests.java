@@ -1,4 +1,4 @@
-package com.fornempre.demo;
+package com.fornempr.demo;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
