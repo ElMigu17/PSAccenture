@@ -1,5 +1,8 @@
 {
   "devDependencies": {
     "prettier": "^3.5.1"
+  },
+  "dependencies": {
+    "ag-grid-vue3": "^33.1.0"
   }
 }
