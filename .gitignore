@@ -17,6 +17,7 @@ coverage
 /cypress/videos/
 /cypress/screenshots/
 
+/node_modules/
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -28,4 +29,3 @@ coverage
 *.sw?
 
 *.tsbuildinfo
-../node_modules
