@@ -1,5 +1,6 @@
 package com.fornempr.demo.controllers;
 
+import com.fornempr.demo.DTOs.EmpresaDto;
 import com.fornempr.demo.entities.Empresa;
 import com.fornempr.demo.repositories.EmpresaRepository;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class EmpresaController {
     }
 
     @PostMapping("/empresas")
-    public Empresa addOneEmployee(@RequestBody Empresa empresa) {
-        return this.empresaRepository.save(empresa);
+    public Empresa addOneEmployee(@RequestBody EmpresaDto empresaDto) {
+        return this.empresaRepository.save(new Empresa(empresaDto));
     }
 }
