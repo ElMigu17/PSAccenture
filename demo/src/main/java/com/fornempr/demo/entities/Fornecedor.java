@@ -31,7 +31,7 @@ public class Fornecedor {
     private Integer CPF;
     @Column(name="rg", nullable=false)
     private String rg;
-    @Column(name="data_de_nascimento", nullable=false)
+    @Column(name="data_nascimento", nullable=false)
     private Integer data_de_nascimento;
     @Column(name="is_pessoa_fisica", nullable=false)
     private Integer is_pessoa_fisica;

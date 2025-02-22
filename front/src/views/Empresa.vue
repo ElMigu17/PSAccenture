@@ -5,7 +5,7 @@
     <ag-grid-vue
       class="aggridEmpresa ag-theme-alpine"
       :columnDefs="columnDefs"
-      :rowData="rowData"
+      :rowData="myRowData"
       :theme="theme"
       :defaultColDef="defaultColDef"
       domLayout="autoHeight"
@@ -40,15 +40,11 @@ export default {
       nomeFantasia: null,
       cep: null,
       columnDefs: [
-        { sortable: true, filter: true, headerName: "Company", field: "company" },
-        { headerName: "Model", field: "model", filter: "agTextColumnFilter" },
-        { headerName: "Price", field: "price" },
+        { sortable: true, filter: true, headerName: "CNPJ", field: "cnpj" },
+        { headerName: "Nome Fantasia", field: "nomeFantasia", filter: "agTextColumnFilter" },
+        { headerName: "CEP", field: "cep" },
       ],
-      rowData: [
-        { company: "Toyota", model: "Celica", price: "35000" },
-        { company: "Ford", model: "Mondeo", price: "32000" },
-        { company: "Porsche", model: "Boxter", price: "72000" },
-      ],
+      myRowData: [],
       theme: themeAlpine,
     };
   },
@@ -58,8 +54,8 @@ export default {
         axios({
           method: "get",
           url: "http://localhost:3000/empresas",
-        }).then(function (response) {
-          console.log(response);
+        }).then((response) => {
+          this.myRowData = response.data;
         });
       } catch (error) {
         console.error("Error sending data:", error);
@@ -67,21 +63,21 @@ export default {
     },
     sendForm(){
       let dataToSend = {cnpj: this.cnpj, nomeFantasia: this.nomeFantasia, cep: this.cep};
-debugger;
       try {
         axios({
           method: "post",
           url: "http://localhost:3000/empresas",
           data: dataToSend,
-        }).then(function (response) {
+        }).then( (response) => {
           console.log(response);
         });
       } catch (error) {
         console.error("Error sending data:", error);
       }
+      this.getData();
     }
   },
-  created() {
+  mounted() {
     this.getData();
   },
 };

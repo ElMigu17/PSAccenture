@@ -13,7 +13,8 @@ public class Empresa {
 
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "empresa_generator")
+    @SequenceGenerator(name = "empresa_generator", sequenceName = "empresa_seq", allocationSize = 1)
     @Column(name="id", nullable=false)
     private Integer id;
 
@@ -24,7 +25,7 @@ public class Empresa {
     @Column(name="CEP", nullable=false)
     private Integer CEP;
     @ManyToMany()
-    private List<Fornecedor> fornecedores;
+    private List<Fornecedor> fornecedor;
 
     public Empresa(EmpresaDto empresaDto){
         this.id = empresaDto.id;
@@ -33,4 +34,7 @@ public class Empresa {
         this.CEP = empresaDto.CEP;
 
     }
+
+    public Empresa(){}
+
 }
