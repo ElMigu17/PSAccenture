@@ -18,7 +18,10 @@
         <p>Nome Fantasia:</p>
         <input type="text" v-model="nomeFantasia"/>
         <p>CEP:</p>
-        <input type="text" v-model="cep"/>
+        <input 
+        placeholder="00000-000"
+      maxlength="9" 
+      v-mask="'#####-###'" type="text" v-model="cep"/>
         <input type="submit"/>
       </form>
     </div>
@@ -36,7 +39,7 @@ export default {
   },
   data() {
     return {
-      cnpj: null,
+      cnpj: null, 
       nomeFantasia: null,
       cep: null,
       columnDefs: [
@@ -61,20 +64,26 @@ export default {
         console.error("Error sending data:", error);
       }
     },
-    sendForm(){
-      let dataToSend = {cnpj: this.cnpj, nomeFantasia: this.nomeFantasia, cep: this.cep};
+    sendForm(event){
+      let dataToSend = {cnpj: this.cnpj, nomeFantasia: this.nomeFantasia, cep: this.cep.replace("-", "")};
       try {
         axios({
           method: "post",
           url: "http://localhost:3000/empresas",
           data: dataToSend,
         }).then( (response) => {
-          console.log(response);
+          this.myRowData.push(response.data);
+          console.log(event);
+          event.target.reset();
+
+          this.cnpj = "";
+          this.nomeFantasia = "";
+          this.cep = null;
+
         });
       } catch (error) {
         console.error("Error sending data:", error);
       }
-      this.getData();
     }
   },
   mounted() {
