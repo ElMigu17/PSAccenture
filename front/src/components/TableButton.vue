@@ -11,8 +11,6 @@ export default {
   name: 'TableButton',
   methods: {
     handleClick() {
-      console.log(this.params);
-      console.log("data", this.params.data);
       this.params.onClick(this.params.data);
     },
   },

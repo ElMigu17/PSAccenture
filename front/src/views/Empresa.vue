@@ -2,7 +2,7 @@
 
 <template>
   <div>
-    <button v-on:click="openFormCreation">Create</button>
+    <button v-on:click="displayForm">Create</button>
   </div>
   <div class="positionTable">
     <ag-grid-vue
@@ -63,7 +63,7 @@ export default {
           cellRenderer: TableButton,
           cellRendererParams: {
             label: "Edit",
-            onClick: (data) => this.editRow(data),
+            onClick: (data) => this.openFormEdit(data),
           },
         },
       ],
@@ -97,8 +97,6 @@ export default {
           data: dataToSend,
         }).then((response) => {
           this.myRowData.push(response.data);
-          console.log(event);
-          //event.target.reset();
           document.getElementsByClassName("my-form")[0].style.display = "none";
 
           this.cnpj = "";
@@ -112,7 +110,6 @@ export default {
     async deleteRow(data) {
       try {
         await axios.delete(`http://localhost:3000/empresas/${data.id}`).then((res) => {
-          console.log(this.myRowData);
           this.myRowData = this.myRowData.filter((row) => row.id !== data.id);
         });
       } catch (error) {
@@ -127,8 +124,6 @@ export default {
           data: dataToSend,
         }).then((response) => {
           this.myRowData.push(response.data);
-          console.log(event);
-          event.target.reset();
 
           this.cnpj = "";
           this.nomeFantasia = "";
@@ -138,8 +133,15 @@ export default {
         console.error("Error deleting data:", error);
       }
     },
-    openFormCreation(){
+    displayForm(){
       document.getElementsByClassName("my-form")[0].style.display = "block";
+    },
+    openFormEdit(data){
+      this.displayForm();
+
+      console.log(data);
+      data
+
     }
   },
   mounted() {
