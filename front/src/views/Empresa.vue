@@ -1,6 +1,9 @@
 <script setup></script>
 
 <template>
+  <div>
+    <button v-on:click="openFormCreation">Create</button>
+  </div>
   <div class="positionTable">
     <ag-grid-vue
       class="aggridEmpresa ag-theme-alpine"
@@ -11,22 +14,12 @@
       domLayout="autoHeight"
     >
     </ag-grid-vue>
-    <div>
-      <form v-on:submit.prevent="sendForm">
-        <p>CNPJ:</p>
-        <input type="text" v-model="cnpj" />
-        <p>Nome Fantasia:</p>
-        <input type="text" v-model="nomeFantasia" />
-        <p>CEP:</p>
-        <input
-          placeholder="00000-000"
-          maxlength="9"
-          v-mask="'#####-###'"
-          type="text"
-          v-model="cep"
-        />
-        <input type="submit" />
-      </form>
+    <div class="my-form">
+      <my-form 
+      v-model:cnpj="cnpj"
+      v-model:nomeFantasia="nomeFantasia"
+      v-model:cep="cep"
+      @edit-todo="sendForm"/>
     </div>
   </div>
 </template>
@@ -36,12 +29,13 @@ import { AgGridVue } from "ag-grid-vue3";
 import axios from "axios";
 import { themeAlpine } from "ag-grid-community";
 import TableButton from "../components/TableButton.vue";
-import { toRaw } from "vue";
+import myForm from "../components/Form.vue";
 
 export default {
   components: {
     AgGridVue,
     TableButton,
+    myForm,
   },
   data() {
     return {
@@ -104,7 +98,8 @@ export default {
         }).then((response) => {
           this.myRowData.push(response.data);
           console.log(event);
-          event.target.reset();
+          //event.target.reset();
+          document.getElementsByClassName("my-form")[0].style.display = "none";
 
           this.cnpj = "";
           this.nomeFantasia = "";
@@ -118,8 +113,7 @@ export default {
       try {
         await axios.delete(`http://localhost:3000/empresas/${data.id}`).then((res) => {
           console.log(this.myRowData);
-          this.myRowData = this.myRowData
-            .filter((row) => row.id !== data.id);
+          this.myRowData = this.myRowData.filter((row) => row.id !== data.id);
         });
       } catch (error) {
         console.error("Error deleting data:", error);
@@ -144,6 +138,9 @@ export default {
         console.error("Error deleting data:", error);
       }
     },
+    openFormCreation(){
+      document.getElementsByClassName("my-form")[0].style.display = "block";
+    }
   },
   mounted() {
     this.getData();
@@ -153,7 +150,7 @@ export default {
 
 <style>
 .aggridEmpresa {
-  width: 40%;
+  min-width: 80%;
 }
 
 .positionTable {
@@ -164,5 +161,9 @@ export default {
   align-items: center;
   flex-direction: column;
   padding-top: 5rem;
+}
+
+.my-form {
+  display: none;
 }
 </style>

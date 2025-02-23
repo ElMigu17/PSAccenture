@@ -1,42 +1,79 @@
+<script setup>
+
+const cnpj = defineModel('cnpj');
+const nomeFantasia = defineModel('nomeFantasia');
+const cep = defineModel('cep');
+</script>
+
 <template>
-  <div class="greetings">
-    <p>CNPJ:</p>
-    <input v-model="message" placeholder="edit me" />
-  </div>
+    <div class="modal">
+      <form class="form" v-on:submit.prevent="$emit('send-form')">
+        <p>CNPJ:</p>
+        <input type="text" v-model="cnpj" />
+        <p>Nome Fantasia:</p>
+        <input type="text" v-model="nomeFantasia" />
+        <p>CEP:</p>
+        <input
+          placeholder="00000-000"
+          maxlength="9"
+          v-mask="'#####-###'"
+          type="text"
+          v-model="cep"
+        /> <br/>
+        <input class="submit-button" type="submit" @click="$emit('edit-todo')" />
+      </form>
+    </div>
 </template>
 
 
 <script>
-import { AgGridVue } from "ag-grid-vue3";
-import axios from 'axios';
-import { themeAlpine } from 'ag-grid-community';
 
 
 export default {
+  props: {
+      cnpj: {
+        type: String,
+      },
+      nomeFantasia: {
+        type: String,
+      },
+      cep: {
+        type: Number,
+      },
+  }
 };
 </script>
 
 <style scoped>
-h1 {
-  font-weight: 500;
-  font-size: 2.6rem;
-  position: relative;
-  top: -10px;
+
+
+
+
+
+.modal{
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background-color: rgba(0,0,0,0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-h3 {
-  font-size: 1.2rem;
+.form{
+  background-color: #FDFDFD;
+  padding: 20px 30px;
+  border-radius: 10px;
+  border: 3px solid black;
 }
 
-.greetings h1,
-.greetings h3 {
-  text-align: center;
-}
-
-@media (min-width: 1024px) {
-  .greetings h1,
-  .greetings h3 {
-    text-align: left;
-  }
+.submit-button{
+  border-radius: 30px;
+  margin-top: 15px;
+  background-color: black;
+  color: white;
+  border: 1px solid black;
 }
 </style>
