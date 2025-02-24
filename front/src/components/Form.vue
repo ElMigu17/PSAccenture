@@ -35,7 +35,7 @@ const id = defineModel('id');
               :checked="forn.check"
               @click="forn.check = !forn.check"
             />
-            {{ forn.nome }} - {{ forn.is_pessoa_fisica ? forn.cpf : forn.cnpj }} - {{ forn.check }} = {{ forn.id }}
+            {{ forn.nome }} - {{ forn.is_pessoa_fisica ? forn.cpf : forn.cnpj }}
             <br/>
           </label>
         </div>
