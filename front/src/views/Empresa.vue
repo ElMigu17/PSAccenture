@@ -1,17 +1,19 @@
 <script setup></script>
 
-<template>
-  <div>
-    <button v-on:click="displayForm">Create</button>
-  </div>
-  <div class="positionTable">
-    <ag-grid-vue class="aggridEmpresa ag-theme-alpine" :columnDefs="columnDefs" :rowData="myRowData" :theme="theme"
-      :defaultColDef="defaultColDef" domLayout="autoHeight">
-    </ag-grid-vue>
-    <div class="my-form">
-      <my-form v-model:cnpj="cnpj" v-model:nomeFantasia="nomeFantasia" v-model:cep="cep"
-        v-model:fornecedores="fornecedores" v-model:dataFornecedoresMarcados="dataFornecedoresMarcados"
-        @edit-todo="sendForm" @close="closeForm" />
+<template >
+  <div class="empresaView">
+    <div class="creationButton">
+      <button v-on:click="displayForm">Create</button>
+    </div>
+    <div class="positionTable">
+      <ag-grid-vue class="aggridEmpresa ag-theme-alpine" :columnDefs="columnDefs" :rowData="myRowData" :theme="theme"
+        :defaultColDef="defaultColDef" domLayout="autoHeight">
+      </ag-grid-vue>
+      <div class="my-form">
+        <my-form v-model:cnpj="cnpj" v-model:nomeFantasia="nomeFantasia" v-model:cep="cep"
+          v-model:fornecedores="fornecedores" v-model:dataFornecedoresMarcados="dataFornecedoresMarcados"
+          @edit-todo="sendForm" @close="closeForm" />
+      </div>
     </div>
   </div>
 </template>
@@ -73,7 +75,6 @@ export default {
           method: "get",
           url: "http://localhost:3000/empresas",
         }).then((response) => {
-          debugger;
           this.myRowData = response.data;
         });
       } catch (error) {
@@ -129,7 +130,6 @@ export default {
         fornecedores: this.dataFornecedoresMarcados.filter((dfm) => dfm.check).map((dfm) => dfm.id)
 
       };
-      debugger;
       try {
         axios({
           method: "put",
@@ -139,7 +139,6 @@ export default {
           let data = response.data;
           let elementToUpdate = this.myRowData.find((row) => row.id === data.id);
           console.log(elementToUpdate);
-          debugger;
           elementToUpdate.cnpj = data.cnpj;
           elementToUpdate.nomeFantasia = data.nomeFantasia;
           elementToUpdate.cep = data.cep;
@@ -195,7 +194,6 @@ export default {
           fornecedoresId.push(Number(forn));
         }
       }
-      debugger;
       for (let forn of allFornecedores.data) {
         forn.check = fornecedoresId.includes(forn.id);
       }
@@ -210,20 +208,38 @@ export default {
 
 <style>
 .aggridEmpresa {
-  min-width: 80%;
+  width: 100%;
 }
 
 .positionTable {
   width: 100%;
-  height: 100vh;
   display: flex;
   justify-content: flex-start;
   align-items: center;
   flex-direction: column;
-  padding-top: 5rem;
 }
 
 .my-form {
   display: none;
 }
+
+.empresaView {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  padding: 5% 10%;
+  align-items: flex-end;
+}
+
+button {
+    border-radius: 30px;
+    margin-top: 15px;
+    background-color: black;
+    color: white;
+    border: 2px solid black;
+    padding: 2px 8px;
+    cursor: pointer;
+  }
+
 </style>
