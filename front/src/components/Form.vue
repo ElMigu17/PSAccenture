@@ -3,6 +3,7 @@
 const cnpj = defineModel('cnpj');
 const nomeFantasia = defineModel('nomeFantasia');
 const cep = defineModel('cep');
+const id = defineModel('id');
 </script>
 
 <template>

@@ -42,6 +42,7 @@ export default {
       cnpj: null,
       nomeFantasia: null,
       cep: null,
+      id: null,
       columnDefs: [
         { sortable: true, filter: true, headerName: "CNPJ", field: "cnpj" },
         {
@@ -84,7 +85,15 @@ export default {
         console.error("Error sending data:", error);
       }
     },
-    sendForm(event) {
+    sendForm(){
+      if(this.id == null){
+        this.createRow();
+      }
+      else{
+        this.editRow();
+      }
+    },
+    createRow() {
       let dataToSend = {
         cnpj: this.cnpj,
         nomeFantasia: this.nomeFantasia,
@@ -116,21 +125,35 @@ export default {
         console.error("Error deleting data:", error);
       }
     },
-    async editRow(data) {
+    async editRow() {
+      let dataToSend = {
+        cnpj: this.cnpj,
+        nomeFantasia: this.nomeFantasia,
+        cep: this.cep.replace("-", ""),
+        id: this.id
+      };
       try {
         axios({
-          method: "edit",
+          method: "put",
           url: "http://localhost:3000/empresas",
           data: dataToSend,
         }).then((response) => {
-          this.myRowData.push(response.data);
+          let data = response.data;
+          let elementToUpdate = this.myRowData.find((row) => row.id !== data.id);
+          console.log(elementToUpdate);
+          elementToUpdate.cnpj = data.cnpj;
+          elementToUpdate.nomeFantasia = data.nomeFantasia;
+          elementToUpdate.cep = data.cep;
+          elementToUpdate.id = data.id;
+          document.getElementsByClassName("my-form")[0].style.display = "none";
 
           this.cnpj = "";
           this.nomeFantasia = "";
           this.cep = null;
+          this.id = null;
         });
       } catch (error) {
-        console.error("Error deleting data:", error);
+        console.error("Error sending data:", error);
       }
     },
     displayForm(){
@@ -140,7 +163,10 @@ export default {
       this.displayForm();
 
       console.log(data);
-      data
+      this.cnpj = data.cnpj;
+      this.nomeFantasia = data.nomeFantasia;
+      this.cep = data.cep;
+      this.id = data.id;
 
     }
   },
