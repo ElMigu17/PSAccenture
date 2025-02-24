@@ -20,17 +20,17 @@ public class FornecedorController {
         return this.fornecedorRepository.findAll();
     }
 
-    @PostMapping("/fornecedors")
+    @PostMapping("/fornecedor")
     public Fornecedor addOneFornecedor(@RequestBody FornecedorDto fornecedorDto) {
         return this.fornecedorRepository.save(new Fornecedor(fornecedorDto));
     }
 
-    @DeleteMapping("/fornecedors/{id}")
+    @DeleteMapping("/fornecedor/{id}")
     public void deleteFornecedor(@PathVariable Integer id) {
         this.fornecedorRepository.deleteById(id);
     }
 
-    @PutMapping("/fornecedors")
+    @PutMapping("/fornecedor")
     public Fornecedor editFornecedor(@RequestBody FornecedorDto fornecedorDto) {
         return this.fornecedorRepository.save(new Fornecedor(fornecedorDto));
     }

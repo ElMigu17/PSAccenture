@@ -1,10 +1,12 @@
 package com.fornempr.demo.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fornempr.demo.DTOs.EmpresaDto;
 import com.fornempr.demo.DTOs.FornecedorDto;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -13,9 +15,9 @@ import java.util.List;
 @Data
 public class Fornecedor {
 
-
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "fornecedor_generator")
+    @SequenceGenerator(name = "fornecedor_generator", sequenceName = "fornecedor_seq", allocationSize = 1)
     @Column(name="id", nullable=false)
     private Integer id;
 
@@ -38,8 +40,9 @@ public class Fornecedor {
     @Column(name="is_pessoa_fisica", nullable=false)
     private Boolean is_pessoa_fisica;
 
-    @ManyToMany()
-    private List<Empresa> empresas;
+    @ManyToMany(mappedBy = "fornecedor")
+    @JsonBackReference
+    private List<Empresa> empresa = new ArrayList<>();
 
     public Fornecedor(){}
 

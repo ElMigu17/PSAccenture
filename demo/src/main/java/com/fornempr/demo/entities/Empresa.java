@@ -1,5 +1,6 @@
 package com.fornempr.demo.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fornempr.demo.DTOs.EmpresaDto;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -25,6 +26,7 @@ public class Empresa {
     @Column(name="CEP", nullable=false)
     private Integer CEP;
     @ManyToMany()
+    @JsonBackReference
     private List<Fornecedor> fornecedor;
 
     public Empresa(EmpresaDto empresaDto){
@@ -32,7 +34,6 @@ public class Empresa {
         this.CNPJ = empresaDto.CNPJ;
         this.nomeFantasia = empresaDto.nomeFantasia;
         this.CEP = empresaDto.CEP;
-
     }
 
     public Empresa(){}
