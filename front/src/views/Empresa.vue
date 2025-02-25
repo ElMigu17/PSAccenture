@@ -1,6 +1,6 @@
 <script setup></script>
 
-<template >
+<template>
   <div class="empresaView">
     <div class="creationButton">
       <button v-on:click="displayForm">Create</button>
@@ -12,8 +12,7 @@
       <div class="my-form">
         <my-form v-model:cnpj="cnpj" v-model:nomeFantasia="nomeFantasia" v-model:cep="cep"
           v-model:fornecedores="fornecedores" v-model:dataFornecedoresMarcados="dataFornecedoresMarcados"
-          v-model:empresaManipulated="empresaManipulated"
-          @edit-todo="sendForm" @close="closeForm" />
+          v-model:empresaManipulated="empresaManipulated" @edit-todo="sendForm" @close="closeForm" />
       </div>
     </div>
   </div>
@@ -25,6 +24,7 @@ import axios from "axios";
 import { themeAlpine } from "ag-grid-community";
 import TableButton from "../components/TableButton.vue";
 import myForm from "../components/FormEmpresa.vue";
+import EmpresaService from "../services/EmpresService.js"
 
 export default {
   components: {
@@ -74,16 +74,9 @@ export default {
   },
   methods: {
     async getData() {
-      try {
-        axios({
-          method: "get",
-          url: "http://localhost:3000/empresas",
-        }).then((response) => {
-          this.myRowData = response.data;
-        });
-      } catch (error) {
-        console.error("Error sending data:", error);
-      }
+      EmpresaService.getEmpresas().then((response) => {
+        this.myRowData = response.data;
+      });
     },
     sendForm() {
       if (this.empresaManipulated.id == null) {
@@ -94,70 +87,38 @@ export default {
       }
     },
     createRow(event) {
-      console.log(this.dataFornecedoresMarcados);
-      let dataToSend = {
-        cnpj: this.empresaManipulated.cnpj,
-        nomeFantasia: this.empresaManipulated.nomeFantasia,
-        cep: this.empresaManipulated.cep.replace("-", ""),
-        fornecedores: this.dataFornecedoresMarcados.filter((dfm) => dfm.check).map((dfm) => dfm.id)
-      };
-      try {
-        axios({
-          method: "post",
-          url: "http://localhost:3000/empresas",
-          data: dataToSend,
-        }).then((response) => {
+      let fornecedores = this.dataFornecedoresMarcados.filter((dfm) => dfm.check).map((dfm) => dfm.id);
+
+      EmpresaService.createEmpresa(this.empresaManipulated, fornecedores)
+        .then((response) => {
           let newLineIndex = this.myRowData.push(response.data);
-          let newLine = this.myRowData[newLineIndex-1];
+          let newLine = this.myRowData[newLineIndex - 1];
           debugger;
-          newLine.listagemFornecedores = this.createListagemFornecedores(dataToSend.fornecedores);
+          newLine.listagemFornecedores = this.createListagemFornecedores(fornecedores);
           this.closeForm();
         });
-      } catch (error) {
-        console.error("Error sending data:", error);
-      }
     },
     async deleteRow(data) {
-      try {
-        await axios.delete(`http://localhost:3000/empresas/${data.id}`).then((res) => {
-          this.myRowData = this.myRowData.filter((row) => row.id !== data.id);
-        });
-      } catch (error) {
-        console.error("Error deleting data:", error);
-      }
+      EmpresaService.deleteEmpresa(data.id).then((res) => {
+        this.myRowData = this.myRowData.filter((row) => row.id !== data.id);
+      });
     },
     async editRow() {
-      let fornecedoresFiltrados = this.dataFornecedoresMarcados.filter((dfm) => dfm.check);
+      let fornecedores = this.dataFornecedoresMarcados.filter((dfm) => dfm.check).map((dfm) => dfm.id)
 
-      let dataToSend = {
-        cnpj: this.empresaManipulated.cnpj,
-        nomeFantasia: this.empresaManipulated.nomeFantasia,
-        cep: this.empresaManipulated.cep.replace("-", ""),
-        id: this.empresaManipulated.id,
-        fornecedores: this.dataFornecedoresMarcados.filter((dfm) => dfm.check).map((dfm) => dfm.id)
+      EmpresaService.updateEmpresa(this.empresaManipulated, fornecedores)
+      .then((response) => {
+        let data = response.data;
+        let elementToUpdate = this.myRowData.find((row) => row.id === data.id);
 
-      };
-      try {
-        axios({
-          method: "put",
-          url: "http://localhost:3000/empresas",
-          data: dataToSend,
-        }).then((response) => {
-          let data = response.data;
-          let elementToUpdate = this.myRowData.find((row) => row.id === data.id);
-          console.log(elementToUpdate);
-          elementToUpdate.listagemFornecedores = this.createListagemFornecedores(dataToSend.fornecedores);
-          debugger;
-          elementToUpdate.cnpj = data.cnpj;
-          elementToUpdate.nomeFantasia = data.nomeFantasia;
-          elementToUpdate.cep = data.cep;
-          elementToUpdate.id = data.id;
-          elementToUpdate.fornecedores = dataToSend.fornecedores;
-          this.closeForm();
-        });
-      } catch (error) {
-        console.error("Error sending data:", error);
-      }
+        elementToUpdate.cnpj = data.cnpj;
+        elementToUpdate.nomeFantasia = data.nomeFantasia;
+        elementToUpdate.cep = data.cep;
+        elementToUpdate.id = data.id;
+        elementToUpdate.fornecedores = fornecedores;
+        elementToUpdate.listagemFornecedores = this.createListagemFornecedores(fornecedores);
+        this.closeForm();
+      });
     },
     displayForm() {
 
@@ -208,13 +169,13 @@ export default {
       }
       return allFornecedores.data;
     },
-    createListagemFornecedores(fornecedoresList){
-      
+    createListagemFornecedores(fornecedoresList) {
+
       let listagemFornecedores = "";
-      for (let fornecedorIndex in fornecedoresList){
-          let fornecedor = this.dataFornecedoresMarcados[fornecedorIndex];
-          let document = fornecedor.is_pessoa_fisica ? fornecedor.cpf.toString() : fornecedor.cnpj;
-          listagemFornecedores += fornecedor.nome + " - " + document + " ,";
+      for (let fornecedorIndex in fornecedoresList) {
+        let fornecedor = this.dataFornecedoresMarcados[fornecedorIndex];
+        let document = fornecedor.is_pessoa_fisica ? fornecedor.cpf.toString() : fornecedor.cnpj;
+        listagemFornecedores += fornecedor.nome + " - " + document + " ,";
       }
       return listagemFornecedores !== "" ? listagemFornecedores.substring(0, listagemFornecedores.length - 1) : "";
     }
@@ -252,13 +213,12 @@ export default {
 }
 
 button {
-    border-radius: 30px;
-    margin-top: 15px;
-    background-color: black;
-    color: white;
-    border: 2px solid black;
-    padding: 2px 8px;
-    cursor: pointer;
-  }
-
+  border-radius: 30px;
+  margin-top: 15px;
+  background-color: black;
+  color: white;
+  border: 2px solid black;
+  padding: 2px 8px;
+  cursor: pointer;
+}
 </style>
