@@ -40,7 +40,7 @@ export default {
         email: null,
         cep: null,
         id: null,
-        is_pessoa_fisica: null,
+        is_pessoa_fisica: false,
         rg: null,
         data_nascimento: null,
         listagemEmpresas: null,
@@ -102,7 +102,7 @@ export default {
         .then((response) => {
           let newLineIndex = this.myRowData.push(response.data);
           let newLine = this.myRowData[newLineIndex - 1];
-          newLine.listagemEmpresas = this.createlistagemEmpresas(empresas);
+          newLine.listagemEmpresas = this.createListagemEmpresas(empresas);
           this.closeForm();
         });
     },
@@ -164,7 +164,7 @@ export default {
       this.fornecedorManipulated.nome = "";
       this.fornecedorManipulated.email = "";
       this.fornecedorManipulated.cep = null;
-      this.fornecedorManipulated.is_pessoa_fisica = null;
+      this.fornecedorManipulated.is_pessoa_fisica = false;
       this.fornecedorManipulated.rg = "";
       this.fornecedorManipulated.data_nascimento = null;
       this.fornecedorManipulated.empresas = [];

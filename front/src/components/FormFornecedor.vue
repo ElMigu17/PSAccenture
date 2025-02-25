@@ -15,32 +15,34 @@
   <template>
     <div class="modal">
       <form class="form" v-on:submit.prevent="$emit('send-form')">
+        <p>Nome:</p>
+        <input type="text" v-model="fornecedorManipulated.nome" />
         <p>CNPJ:</p>
         <input type="text" v-model="fornecedorManipulated.cnpj" />
         <p>CPF:</p>
         <input type="text" v-model="fornecedorManipulated.cpf" />
-        <p>Nome:</p>
-        <input type="text" v-model="fornecedorManipulated.nome" />
         <p>E-mail:</p>
         <input type="text" v-model="fornecedorManipulated.email" />
         <p>CEP:</p>
-        <input placeholder="00000-000" maxlength="9" v-mask="'#####-###'" type="text" v-model="fornecedorManipulated.cep" />
-        <br/>
+        <input placeholder="00000-000" maxlength="9" v-mask="'#####-###'" type="text"
+          v-model="fornecedorManipulated.cep" />
+        <br />
         <label>
-          <input type="checkbox" v-model="fornecedorManipulated.is_pessoa_fisica"
-             />
-            Pessoa Fisica
+          <input type="checkbox" v-model="fornecedorManipulated.is_pessoa_fisica" />
+          Pessoa Fisica
         </label>
-        <p>RG:</p>
-        <input type="text" v-model="fornecedorManipulated.rg" />
-        <p>Data de Nascimento:</p>
-        <input type="text" v-model="fornecedorManipulated.data_nascimento" />
+        <div v-if="fornecedorManipulated.is_pessoa_fisica">
+          <p>RG:</p>
+          <input type="text" v-model="fornecedorManipulated.rg" />
+          <p>Data de Nascimento:</p>
+          <input type="text" v-model="fornecedorManipulated.data_nascimento" />
+        </div>
         <p>Empresas:</p>
         <div v-if="props.dataEmpresasMarcados && props.dataEmpresasMarcados.length > 0">
           <input type="text" v-model="filtro" />
           <div v-for="emp in props.dataEmpresasMarcados">
             <label
-              v-if="filtro === '' || filtro === null || filtro !==null && (emp.cnpj.includes(filtro) || emp.nome.includes(filtro))"
+              v-if="filtro === '' || filtro === null || filtro !== null && (emp.cnpj.includes(filtro) || emp.nome.includes(filtro))"
               :key="emp.id" :for="emp.id">
               <input type="checkbox" :value="emp.id" :id="emp.id" :name="emp.id" :checked="emp.check"
                 @click="emp.check = !emp.check" />
