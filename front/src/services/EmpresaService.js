@@ -7,6 +7,7 @@ export default {
             cnpj: empresa.cnpj,
             nomeFantasia: empresa.nomeFantasia,
             cep: empresa.cep.replace("-", ""),
+            estado: empresa.estado,
             fornecedores: fornecedores
         };
 
@@ -48,6 +49,7 @@ export default {
             cnpj: empresa.cnpj,
             nomeFantasia: empresa.nomeFantasia,
             cep: empresa.cep.replace("-", ""),
+            estado: empresa.estado,
             fornecedores: fornecedores
         };
 

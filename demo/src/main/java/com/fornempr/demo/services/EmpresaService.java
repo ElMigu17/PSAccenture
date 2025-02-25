@@ -8,6 +8,7 @@ import com.fornempr.demo.repositories.FornecedorRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -17,7 +18,7 @@ public class EmpresaService {
 
     private EmpresaRepository empresaRepository;
     private final FornecedorRepository fornecedorRepository;
-
+    private final long adulthoodInMilisecond = 568036800000L;
     public EmpresaService(EmpresaRepository empresaRepository, FornecedorRepository fornecedorRepository) {
         this.empresaRepository = empresaRepository;
         this.fornecedorRepository = fornecedorRepository;
@@ -35,22 +36,23 @@ public class EmpresaService {
                 listagemFornecedores += fornecedor.getNome() + " - " + document + " ,";
             }
             listagemFornecedores = listagemFornecedores!="" ?listagemFornecedores.substring(0, listagemFornecedores.length() - 1) : "";
-            empresaDtoList.add(new EmpresaDto(empresa.getId(), empresa.getCNPJ(), empresa.getNomeFantasia(), empresa.getCEP(), listagemFornecedores,fornecedorToEmpresaDtos));
+            empresaDtoList.add(new EmpresaDto(empresa.getId(), empresa.getCNPJ(), empresa.getNomeFantasia(), empresa.getCEP(), empresa.getEstado(), listagemFornecedores,fornecedorToEmpresaDtos));
         }
         return empresaDtoList;
     }
 
     public Empresa addOneEmpresa(EmpresaDto empresaDto) {
         Empresa empresa = new Empresa(empresaDto);
-        String errors = this.validateFornecedor(empresa);
-        if(!errors.isEmpty()){
-            throw new IllegalArgumentException(errors);
-        }
         if(empresaDto.getFornecedores() == null) {
             return this.empresaRepository.save(empresa);
         }
         List<Fornecedor> fornecedoresList = (List<Fornecedor>) fornecedorRepository.findAllById(empresaDto.getFornecedores());
+
         empresa.setFornecedor(fornecedoresList);
+        String errors = this.validateFornecedor(empresa);
+        if(!errors.isEmpty()){
+            throw new IllegalArgumentException(errors);
+        }
         return this.empresaRepository.save(empresa);
     }
 
@@ -60,6 +62,22 @@ public class EmpresaService {
         if(this.checkIfCNPJIsUsed(empresa.getCNPJ(), empresa.getId())){
             errors += "CNPJ already is being used \n";
         }
+
+
+        if(empresa.getEstado().equals("Paraná")){
+            Date now = new Date();
+            for(Fornecedor fornecedor : empresa.getFornecedor()){
+                if(!fornecedor.getIs_pessoa_fisica()){
+                    continue;
+                }
+                long ageInMilisecond = fornecedor.getData_nascimento().getTime() - now.getTime();
+                if(adulthoodInMilisecond > ageInMilisecond){
+                    errors += "Due to the empresa being located at Paraná, it can't have a fornecedor with less than 18 years \n";
+                    break;
+                }
+            }
+        }
+
 
         return errors;
     }

@@ -100,11 +100,12 @@ export default {
       let empresas = this.dataEmpresasMarcados.filter((dfm) => dfm.check).map((dfm) => dfm.id);
 
       UtilService.verificarCep(this.fornecedorManipulated.cep)
-        .then((response) => {
-          if (response.data.erro) {
+        .then((responseCep) => {
+          if (responseCep.data.erro) {
             alert("CEP invalid");
             return;
           }
+          this.fornecedorManipulated.estado = responseCep.data.estado;
           FornecedorService.createFornecedor(this.fornecedorManipulated, empresas)
             .then((response) => {
               let newLineIndex = this.myRowData.push(response.data);
@@ -126,11 +127,12 @@ export default {
       let empresas = this.dataEmpresasMarcados.filter((dfm) => dfm.check).map((dfm) => dfm.id)
 
       UtilService.verificarCep(this.fornecedorManipulated.cep)
-        .then((response) => {
-          if (response.data.erro) {
+        .then((responseCep) => {
+          if (responseCep.data.erro) {
             alert("CEP invalid");
             return;
           }
+          this.fornecedorManipulated.estado = responseCep.data.estado;
 
           FornecedorService.updateFornecedor(this.fornecedorManipulated, empresas)
             .then((response) => {

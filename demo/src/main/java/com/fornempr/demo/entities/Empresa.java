@@ -26,6 +26,8 @@ public class Empresa {
     private String nomeFantasia;
     @Column(name="CEP", nullable=false)
     private Integer CEP;
+    @Column(name="estado", nullable=false)
+    private String estado;
     @ManyToMany()
     @JsonBackReference
     private List<Fornecedor> fornecedor = new ArrayList<>();
@@ -35,6 +37,7 @@ public class Empresa {
         this.CNPJ = empresaDto.CNPJ;
         this.nomeFantasia = empresaDto.nomeFantasia;
         this.CEP = empresaDto.CEP;
+        this.estado = empresaDto.estado;
     }
 
     public Empresa(){}

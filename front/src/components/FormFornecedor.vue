@@ -35,7 +35,7 @@
           <p>RG:</p>
           <input type="text" v-model="fornecedorManipulated.rg" />
           <p>Data de Nascimento:</p>
-          <input type="text" v-model="fornecedorManipulated.data_nascimento" />
+          <input type="date" v-model="fornecedorManipulated.data_nascimento" />
         </div>
         <p>Empresas:</p>
         <div v-if="props.dataEmpresasMarcados && props.dataEmpresasMarcados.length > 0">

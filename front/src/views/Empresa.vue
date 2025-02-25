@@ -89,11 +89,12 @@ export default {
     createRow(event) {
       let fornecedores = this.dataFornecedoresMarcados.filter((dfm) => dfm.check).map((dfm) => dfm.id);
       UtilService.verificarCep(this.empresaManipulated.cep)
-        .then((response) => {
-          if (response.data.erro) {
+        .then((responseCep) => {
+          if (responseCep.data.erro) {
             alert("CEP invalid");
             return;
           }
+          this.empresaManipulated.estado = responseCep.data.estado;
           EmpresaService.createEmpresa(this.empresaManipulated, fornecedores)
             .then((response) => {
               let newLineIndex = this.myRowData.push(response.data);
@@ -115,11 +116,12 @@ export default {
       let fornecedores = this.dataFornecedoresMarcados.filter((dfm) => dfm.check).map((dfm) => dfm.id)
 
       UtilService.verificarCep(this.empresaManipulated.cep)
-        .then((response) => {
-          if (response.data.erro) {
+        .then((responseCep) => {
+          if (responseCep.data.erro) {
             alert("CEP invalid");
             return;
           }
+          this.empresaManipulated.estado = responseCep.data.estado;
           EmpresaService.updateEmpresa(this.empresaManipulated, fornecedores)
             .then((response) => {
               let data = response.data;
