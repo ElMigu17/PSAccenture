@@ -47,6 +47,7 @@ export default {
           filter: "agTextColumnFilter",
         },
         { headerName: "CEP", field: "cep" },
+        { headerName: "Fornecedores", field: "listagemFornecedores" },
         {
           headerName: "Actions",
           cellRenderer: TableButton,
@@ -103,7 +104,9 @@ export default {
           url: "http://localhost:3000/empresas",
           data: dataToSend,
         }).then((response) => {
-          this.myRowData.push(response.data);
+          let newLineIndex = this.myRowData.push(response.data);
+          let newLine = this.myRowData[newLineIndex-1];
+          newLine.listagemFornecedores = this.createListagemFornecedores(newLine.fornecedores);
           this.closeForm();
         });
       } catch (error) {
@@ -139,6 +142,8 @@ export default {
           let data = response.data;
           let elementToUpdate = this.myRowData.find((row) => row.id === data.id);
           console.log(elementToUpdate);
+          elementToUpdate.listagemFornecedores = this.createListagemFornecedores(dataToSend.fornecedores);
+          debugger;
           elementToUpdate.cnpj = data.cnpj;
           elementToUpdate.nomeFantasia = data.nomeFantasia;
           elementToUpdate.cep = data.cep;
@@ -199,6 +204,16 @@ export default {
       }
       return allFornecedores.data;
     },
+    createListagemFornecedores(fornecedoresList){
+      
+      let listagemFornecedores = "";
+      for (let fornecedorIndex in fornecedoresList){
+          let fornecedor = this.dataFornecedoresMarcados[fornecedorIndex];
+          let document = fornecedor.is_pessoa_fisica ? fornecedor.cpf.toString() : fornecedor.cnpj;
+          listagemFornecedores += fornecedor.nome + " - " + document + " ,";
+      }
+      return listagemFornecedores !== "" ? listagemFornecedores.substring(0, listagemFornecedores.length - 1) : "";
+    }
   },
   mounted() {
     this.getData();

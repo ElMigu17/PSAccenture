@@ -28,10 +28,14 @@ public class EmpresaService {
         List<EmpresaDto> empresaDtoList = new ArrayList<>();
         for(Empresa empresa : empresas){
             List<Integer> fornecedorToEmpresaDtos = new ArrayList<>();
+            String listagemFornecedores = "";
             for (Fornecedor fornecedor : empresa.getFornecedor()){
                 fornecedorToEmpresaDtos.add(fornecedor.getId());
+                String document = fornecedor.getIs_pessoa_fisica() ? fornecedor.getCPF().toString() : fornecedor.getCNPJ();
+                listagemFornecedores += fornecedor.getNome() + " - " + document + " ,";
             }
-            empresaDtoList.add(new EmpresaDto(empresa.getId(), empresa.getCNPJ(), empresa.getNomeFantasia(), empresa.getCEP(), fornecedorToEmpresaDtos));
+            listagemFornecedores = listagemFornecedores!="" ?listagemFornecedores.substring(0, listagemFornecedores.length() - 1) : "";
+            empresaDtoList.add(new EmpresaDto(empresa.getId(), empresa.getCNPJ(), empresa.getNomeFantasia(), empresa.getCEP(), listagemFornecedores,fornecedorToEmpresaDtos));
         }
         return empresaDtoList;
     }
