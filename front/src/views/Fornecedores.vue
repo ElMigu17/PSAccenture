@@ -12,7 +12,6 @@
       <div class="my-form">
         <my-form v-model:cnpj="cnpj" v-model:nomeFantasia="nomeFantasia" v-model:cep="cep"
           v-model:fornecedores="fornecedores" v-model:dataFornecedoresMarcados="dataFornecedoresMarcados"
-          v-model:empresaManipulated="empresaManipulated"
           @edit-todo="sendForm" @close="closeForm" />
       </div>
     </div>
@@ -34,13 +33,11 @@ export default {
   },
   data() {
     return {
-      empresaManipulated: {
-        cnpj: null,
-        nomeFantasia: null,
-        cep: null,
-        id: null,
-        fornecedores: null,
-      },
+      cnpj: null,
+      nomeFantasia: null,
+      cep: null,
+      id: null,
+      fornecedores: null,
       dataFornecedoresMarcados: [],
       columnDefs: [
         { sortable: true, filter: true, headerName: "CNPJ", field: "cnpj" },
@@ -86,7 +83,7 @@ export default {
       }
     },
     sendForm() {
-      if (this.empresaManipulated.id == null) {
+      if (this.id == null) {
         this.createRow();
       }
       else {
@@ -96,10 +93,10 @@ export default {
     createRow(event) {
       console.log(this.dataFornecedoresMarcados);
       let dataToSend = {
-        cnpj: this.empresaManipulated.cnpj,
-        nomeFantasia: this.empresaManipulated.nomeFantasia,
-        cep: this.empresaManipulated.cep.replace("-", ""),
-        fornecedores: this.dataFornecedoresMarcados.filter((dfm) => dfm.check).map((dfm) => dfm.id)
+        cnpj: this.cnpj,
+        nomeFantasia: this.nomeFantasia,
+        cep: this.cep.replace("-", ""),
+        idFornecedores: this.dataFornecedoresMarcados.filter((dfm) => dfm.check).map((dfm) => dfm.id)
       };
       try {
         axios({
@@ -109,8 +106,7 @@ export default {
         }).then((response) => {
           let newLineIndex = this.myRowData.push(response.data);
           let newLine = this.myRowData[newLineIndex-1];
-          debugger;
-          newLine.listagemFornecedores = this.createListagemFornecedores(dataToSend.fornecedores);
+          newLine.listagemFornecedores = this.createListagemFornecedores(newLine.fornecedores);
           this.closeForm();
         });
       } catch (error) {
@@ -130,10 +126,10 @@ export default {
       let fornecedoresFiltrados = this.dataFornecedoresMarcados.filter((dfm) => dfm.check);
 
       let dataToSend = {
-        cnpj: this.empresaManipulated.cnpj,
-        nomeFantasia: this.empresaManipulated.nomeFantasia,
-        cep: this.empresaManipulated.cep.replace("-", ""),
-        id: this.empresaManipulated.id,
+        cnpj: this.cnpj,
+        nomeFantasia: this.nomeFantasia,
+        cep: this.cep.replace("-", ""),
+        id: this.id,
         fornecedores: this.dataFornecedoresMarcados.filter((dfm) => dfm.check).map((dfm) => dfm.id)
 
       };
@@ -176,30 +172,30 @@ export default {
       }
     },
     openFormEdit(data) {
-      this.empresaManipulated.fornecedores = data.fornecedores;
+      this.fornecedores = data.fornecedores;
       this.displayForm();
 
-      this.empresaManipulated.cnpj = data.cnpj;
-      this.empresaManipulated.nomeFantasia = data.nomeFantasia;
-      this.empresaManipulated.cep = data.cep;
-      this.empresaManipulated.id = data.id;
+      this.cnpj = data.cnpj;
+      this.nomeFantasia = data.nomeFantasia;
+      this.cep = data.cep;
+      this.id = data.id;
 
     },
 
     closeForm() {
-      this.empresaManipulated.cnpj = "";
-      this.empresaManipulated.nomeFantasia = "";
-      this.empresaManipulated.cep = null;
-      this.empresaManipulated.id = null;
-      this.empresaManipulated.fornecedores = [];
+      this.cnpj = "";
+      this.nomeFantasia = "";
+      this.cep = null;
+      this.id = null;
+      this.fornecedores = [];
       this.dataFornecedoresMarcados = [];
       document.getElementsByClassName("my-form")[0].style.display = "none";
 
     },
     fornecedoresMarcados(allFornecedores) {
       let fornecedoresId = [];
-      if (this.empresaManipulated.fornecedores) {
-        for (let forn of this.empresaManipulated.fornecedores) {
+      if (this.fornecedores) {
+        for (let forn of this.fornecedores) {
           fornecedoresId.push(Number(forn));
         }
       }

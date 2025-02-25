@@ -1,10 +1,7 @@
   <script setup>
   import { defineProps } from 'vue';
 
-  const cnpj = defineModel('cnpj');
-  const nomeFantasia = defineModel('nomeFantasia');
-  const cep = defineModel('cep');
-  const id = defineModel('id');
+  const empresaManipulated = defineModel('empresaManipulated');
 
   const props = defineProps({
     dataFornecedoresMarcados: {
@@ -19,11 +16,11 @@
     <div class="modal">
       <form class="form" v-on:submit.prevent="$emit('send-form')">
         <p>CNPJ:</p>
-        <input type="text" v-model="cnpj" />
+        <input type="text" v-model="empresaManipulated.cnpj" />
         <p>Nome Fantasia:</p>
-        <input type="text" v-model="nomeFantasia" />
+        <input type="text" v-model="empresaManipulated.nomeFantasia" />
         <p>CEP:</p>
-        <input placeholder="00000-000" maxlength="9" v-mask="'#####-###'" type="text" v-model="cep" />
+        <input placeholder="00000-000" maxlength="9" v-mask="'#####-###'" type="text" v-model="empresaManipulated.cep" />
         <p>Fornecedor:</p>
         <div v-if="props.dataFornecedoresMarcados && props.dataFornecedoresMarcados.length > 0">
           <input type="text" v-model="filtro" />
