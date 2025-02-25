@@ -82,7 +82,8 @@ public class FornecedorService {
             empresa.getFornecedor().remove(fornecedor);
         }
 
-        List<Empresa> empresasToSave = empresasToAdd;
+        List<Empresa> empresasToSave = new ArrayList<>();
+        empresasToSave.addAll(empresasToAdd);
         empresasToSave.addAll(empresasToRemove);
 
         this.empresaRepository.saveAll(empresasToSave);
