@@ -57,6 +57,25 @@ public class FornecedorService {
 
     public Fornecedor updateFornecedor(FornecedorDto fornecedorDto) {
         Fornecedor fornecedor = new Fornecedor(fornecedorDto);
+        Fornecedor oldFornecedor = this.fornecedorRepository.findById(fornecedor.getId()).get();
+
+        Set<Integer> empresasAdded = this.empresasInFornecedor1AndNotIn2(fornecedor, oldFornecedor);
+        Set<Integer> empresasRemoved = this.empresasInFornecedor1AndNotIn2(oldFornecedor, fornecedor);
+
+        List<Empresa> empresasToAdd = (List<Empresa>) this.empresaRepository.findAllById(empresasAdded);
+        List<Empresa> empresasToRemove = (List<Empresa>) this.empresaRepository.findAllById(empresasRemoved);
+
+        for(Empresa empresa : empresasToAdd){
+            empresa.getFornecedor().add(fornecedor);
+        }
+        for(Empresa empresa : empresasToRemove){
+            empresa.getFornecedor().remove(fornecedor);
+        }
+
+        List<Empresa> empresasToSave = empresasToAdd;
+        empresasToSave.addAll(empresasToRemove);
+
+        this.empresaRepository.saveAll(empresasToSave);
         return this.fornecedorRepository.save(fornecedor);
     }
 
@@ -72,6 +91,8 @@ public class FornecedorService {
         return empresasNotInFornecedor;
 
     }
+
+
 
     public void deleteById(Integer id) {
         this.fornecedorRepository.deleteById(id);
