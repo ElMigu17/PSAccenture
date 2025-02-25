@@ -13,7 +13,8 @@
     "lint": "eslint . --fix"
   },
   "dependencies": {
-    "ag-grid-vue3": "^33.1.0",
+    "ag-grid-community": "^33.1.1",
+    "ag-grid-vue3": "^33.1.1",
     "axios": "^1.7.9",
     "jquery": "^3.7.1",
     "maska": "^3.1.0",

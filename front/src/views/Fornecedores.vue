@@ -6,8 +6,7 @@
       <button v-on:click="displayForm">Create</button>
     </div>
     <div class="positionTable">
-      <ag-grid-vue class="aggridEmpresa ag-theme-alpine" :columnDefs="columnDefs" :rowData="myRowData" :theme="theme"
-        :defaultColDef="defaultColDef" domLayout="autoHeight">
+      <ag-grid-vue class="aggridEmpresa ag-theme-alpine" :columnDefs="columnDefs" :rowData="myRowData" :theme="themeBalham" :defaultColDef="defaultColDef" domLayout="autoHeight">
       </ag-grid-vue>
       <div class="my-form">
         <my-form v-model:dataEmpresasMarcados="dataEmpresasMarcados"
@@ -18,13 +17,14 @@
 </template>
 
 <script>
-import { AgGridVue } from "ag-grid-vue3";
-import { themeAlpine } from "ag-grid-community";
+import { AgGridVue } from "ag-grid-vue3"; 
+import {AllCommunityModule, ModuleRegistry, themeBalham } from "ag-grid-community";
 import TableButton from "../components/TableButton.vue";
 import myForm from "../components/FormFornecedor.vue";
 import EmpresaService from "../services/EmpresaService.js";
 import FornecedorService from "../services/FornecedorService.js";
 import UtilService from "../services/UtilService.js";
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 export default {
   components: {
@@ -34,6 +34,9 @@ export default {
   },
   data() {
     return {
+      gridOptions: {
+        enableFilter: true
+      },
       fornecedorManipulated: {
         cnpj: null,
         cpf: null,
@@ -50,11 +53,11 @@ export default {
       dataEmpresasMarcados: [],
       columnDefs: [
         { sortable: true, filter: true, headerName: "CNPJ", field: "cnpj" },
-        { sortable: true, filter: true, headerName: "CPF", field: "cpf" },
+        { sortable: true, filter: true, enableFilter: true, headerName: "CPF", field: "cpf" },
         {
           headerName: "Nome",
           field: "nome",
-          filter: "agTextColumnFilter",
+          filter: "agTextColumnFilter"
         },
         { headerName: "E-mail", field: "email" },
         { headerName: "CEP", field: "cep" },
@@ -87,10 +90,8 @@ export default {
         flex: 1,
         minWidth: 120,
         filter: true,
-        floatingFilter: true,
       },
       myRowData: [],
-      theme: themeAlpine,
     };
   },
   methods: {
