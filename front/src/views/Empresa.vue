@@ -95,6 +95,9 @@ export default {
           let newLine = this.myRowData[newLineIndex - 1];
           newLine.listagemFornecedores = this.createListagemFornecedores(fornecedores);
           this.closeForm();
+        })
+        .catch((err) => {
+          alert(err.response.data.message);
         });
     },
     async deleteRow(data) {
@@ -117,6 +120,9 @@ export default {
           elementToUpdate.fornecedores = fornecedores;
           elementToUpdate.listagemFornecedores = this.createListagemFornecedores(fornecedores);
           this.closeForm();
+        })
+        .catch((err) => {
+          alert(err.response.data.message);
         });
     },
     displayForm() {

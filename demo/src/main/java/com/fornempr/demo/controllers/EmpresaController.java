@@ -2,8 +2,11 @@ package com.fornempr.demo.controllers;
 
 import com.fornempr.demo.DTOs.EmpresaDto;
 import com.fornempr.demo.entities.Empresa;
+import com.fornempr.demo.entities.Fornecedor;
 import com.fornempr.demo.repositories.EmpresaRepository;
 import com.fornempr.demo.services.EmpresaService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,8 +28,15 @@ public class EmpresaController {
     }
 
     @PostMapping("/empresas")
-    public Empresa addOneEmpresa(@RequestBody EmpresaDto empresaDto) {
-        return this.empresaService.addOneEmpresa(empresaDto);
+    public ResponseEntity addOneEmpresa(@RequestBody EmpresaDto empresaDto) {
+        Empresa empresa = null;
+        try {
+            empresa = this.empresaService.addOneEmpresa(empresaDto);
+        }
+        catch (IllegalArgumentException exception){
+            return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(empresa, HttpStatus.OK);
     }
 
     @DeleteMapping("/empresas/{id}")
@@ -35,7 +45,14 @@ public class EmpresaController {
     }
 
     @PutMapping("/empresas")
-    public Empresa editEmpresa(@RequestBody EmpresaDto empresaDto) {
-        return this.empresaService.addOneEmpresa(empresaDto);
+    public ResponseEntity editEmpresa(@RequestBody EmpresaDto empresaDto) {
+        Empresa empresa = null;
+        try {
+            empresa = this.empresaService.addOneEmpresa(empresaDto);
+        }
+        catch (IllegalArgumentException exception){
+            return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(empresa, HttpStatus.OK);
     }
 }

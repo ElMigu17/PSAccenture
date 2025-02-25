@@ -104,6 +104,9 @@ export default {
           let newLine = this.myRowData[newLineIndex - 1];
           newLine.listagemEmpresas = this.createListagemEmpresas(empresas);
           this.closeForm();
+        })
+        .catch((err) => {
+          alert(err.response.data.message);
         });
     },
     async deleteRow(data) {
@@ -116,6 +119,7 @@ export default {
 
       FornecedorService.updateFornecedor(this.fornecedorManipulated, empresas)
         .then((response) => {
+          console.log(response);
           let data = response.data;
           let elementToUpdate = this.myRowData.find((row) => row.id === data.id);
 
@@ -132,6 +136,9 @@ export default {
           elementToUpdate.empresas = empresas;
           elementToUpdate.listagemEmpresas = this.createListagemEmpresas(empresas);
           this.closeForm();
+        })
+        .catch((err) => {
+          alert(err.response.data.message);
         });
     },
     displayForm() {

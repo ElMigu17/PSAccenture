@@ -4,6 +4,8 @@ import com.fornempr.demo.DTOs.FornecedorDto;
 import com.fornempr.demo.entities.Fornecedor;
 import com.fornempr.demo.repositories.FornecedorRepository;
 import com.fornempr.demo.services.FornecedorService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "http://localhost:5173", maxAge = 3600, methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.DELETE, RequestMethod.PUT})
@@ -22,8 +24,15 @@ public class FornecedorController {
     }
 
     @PostMapping("/fornecedor")
-    public Fornecedor addOneFornecedor(@RequestBody FornecedorDto fornecedorDto) {
-        return this.fornecedorService.addOneFornecedor(fornecedorDto);
+    public ResponseEntity addOneFornecedor(@RequestBody FornecedorDto fornecedorDto) {
+        Fornecedor fornecedor = null;
+        try {
+            fornecedor = this.fornecedorService.addOneFornecedor(fornecedorDto);
+        }
+        catch (IllegalArgumentException exception){
+            return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(fornecedor, HttpStatus.OK);
     }
 
     @DeleteMapping("/fornecedor/{id}")
@@ -32,7 +41,14 @@ public class FornecedorController {
     }
 
     @PutMapping("/fornecedor")
-    public Fornecedor editFornecedor(@RequestBody FornecedorDto fornecedorDto) {
-        return this.fornecedorService.updateFornecedor(fornecedorDto);
+    public ResponseEntity editFornecedor(@RequestBody FornecedorDto fornecedorDto) {
+        Fornecedor fornecedor = null;
+        try {
+            fornecedor = this.fornecedorService.updateFornecedor(fornecedorDto);
+        }
+        catch (IllegalArgumentException exception){
+            return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(fornecedor, HttpStatus.OK);
     }
 }

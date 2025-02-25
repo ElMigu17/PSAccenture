@@ -43,6 +43,12 @@ public class FornecedorService {
 
     public Fornecedor addOneFornecedor(FornecedorDto fornecedorDto) {
         Fornecedor fornecedor = new Fornecedor(fornecedorDto);
+
+        String errors = this.validateFornecedor(fornecedor);
+        if(!errors.isEmpty()){
+            throw new IllegalArgumentException(errors);
+        }
+
         if(fornecedorDto.getEmpresas() == null) {
             return this.fornecedorRepository.save(fornecedor);
         }
@@ -57,6 +63,10 @@ public class FornecedorService {
 
     public Fornecedor updateFornecedor(FornecedorDto fornecedorDto) {
         Fornecedor fornecedor = new Fornecedor(fornecedorDto);
+        String errors = this.validateFornecedor(fornecedor);
+        if(!errors.isEmpty()){
+            throw new IllegalArgumentException(errors);
+        }
         Fornecedor oldFornecedor = this.fornecedorRepository.findById(fornecedor.getId()).get();
 
         Set<Integer> empresasAdded = this.empresasInFornecedor1AndNotIn2(fornecedor, oldFornecedor);
@@ -92,7 +102,32 @@ public class FornecedorService {
 
     }
 
+    private String validateFornecedor(Fornecedor fornecedor){
+        String errors = "";
+        if(this.checkCpfIsBeingDuplicated(fornecedor.getCPF(), fornecedor.getId())){
+            errors = "CPF already is being used \n";
+        }
 
+        if(this.checkIfCNPJIsUsed(fornecedor.getCNPJ(), fornecedor.getId())){
+            errors += "CNPJ already is being used \n";
+        }
+
+        return errors;
+    }
+
+    public boolean checkCpfIsBeingDuplicated(Integer cpf, Integer id){
+        List<Fornecedor> fornecedores = this.fornecedorRepository.findByCPF(cpf);
+        return !(fornecedores.isEmpty() ||
+                fornecedores.get(0).getId() == id);
+    }
+
+    public boolean checkIfCNPJIsUsed(String cnpj, Integer id){
+        List<Fornecedor> fornecedores = this.fornecedorRepository.findByCNPJ(cnpj);
+
+        return !(this.empresaRepository.findByCNPJ(cnpj).isEmpty() &&
+                (fornecedores.isEmpty() ||
+                fornecedores.get(0).getId() == id));
+    }
 
     public void deleteById(Integer id) {
         this.fornecedorRepository.deleteById(id);

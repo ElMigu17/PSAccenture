@@ -42,12 +42,33 @@ public class EmpresaService {
 
     public Empresa addOneEmpresa(EmpresaDto empresaDto) {
         Empresa empresa = new Empresa(empresaDto);
+        String errors = this.validateFornecedor(empresa);
+        if(!errors.isEmpty()){
+            throw new IllegalArgumentException(errors);
+        }
         if(empresaDto.getFornecedores() == null) {
             return this.empresaRepository.save(empresa);
         }
         List<Fornecedor> fornecedoresList = (List<Fornecedor>) fornecedorRepository.findAllById(empresaDto.getFornecedores());
         empresa.setFornecedor(fornecedoresList);
         return this.empresaRepository.save(empresa);
+    }
+
+    private String validateFornecedor(Empresa empresa){
+        String errors = "";
+
+        if(this.checkIfCNPJIsUsed(empresa.getCNPJ(), empresa.getId())){
+            errors += "CNPJ already is being used \n";
+        }
+
+        return errors;
+    }
+
+    public boolean checkIfCNPJIsUsed(String cnpj, Integer id){
+        List<Empresa> empresas = this.empresaRepository.findByCNPJ(cnpj);
+
+        return !(this.fornecedorRepository.findByCNPJ(cnpj).isEmpty() &&
+                (empresas.isEmpty() || empresas.get(0).getId() == id));
     }
 
     public void deleteById(Integer id) {
