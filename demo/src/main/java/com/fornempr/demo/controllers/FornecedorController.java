@@ -33,6 +33,6 @@ public class FornecedorController {
 
     @PutMapping("/fornecedor")
     public Fornecedor editFornecedor(@RequestBody FornecedorDto fornecedorDto) {
-        return this.fornecedorService.addOneFornecedor(fornecedorDto);
+        return this.fornecedorService.updateFornecedor(fornecedorDto);
     }
 }

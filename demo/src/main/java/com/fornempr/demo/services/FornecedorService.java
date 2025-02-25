@@ -8,8 +8,7 @@ import com.fornempr.demo.repositories.EmpresaRepository;
 import com.fornempr.demo.repositories.FornecedorRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -48,12 +47,36 @@ public class FornecedorService {
             return this.fornecedorRepository.save(fornecedor);
         }
         List<Empresa> empresaList = (List<Empresa>) empresaRepository.findAllById(fornecedorDto.getEmpresas());
-        fornecedor.setEmpresa(empresaList);
+        for(Empresa empresa : empresaList){
+            empresa.getFornecedor().add(fornecedor);
+        }
+
+        this.empresaRepository.saveAll(empresaList);
         return this.fornecedorRepository.save(fornecedor);
+    }
+
+    public Fornecedor updateFornecedor(FornecedorDto fornecedorDto) {
+        Fornecedor fornecedor = new Fornecedor(fornecedorDto);
+        return this.fornecedorRepository.save(fornecedor);
+    }
+
+
+    private Set<Integer> empresasInFornecedor1AndNotIn2(Fornecedor fornecedor, Fornecedor fornecedor2){
+        Set<Integer> idEmpresas = fornecedor2.getEmpresa().stream().map( e -> e.getId()).collect(Collectors.toSet());
+        Set<Integer> empresasNotInFornecedor = new HashSet<>();
+        for (Empresa empresa : fornecedor.getEmpresa()){
+            if(!idEmpresas.contains(empresa.getId())){
+                empresasNotInFornecedor.add(empresa.getId());
+            }
+        }
+        return empresasNotInFornecedor;
+
     }
 
     public void deleteById(Integer id) {
         this.fornecedorRepository.deleteById(id);
     }
+
+
 
 }
