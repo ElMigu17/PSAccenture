@@ -59,7 +59,12 @@ export default {
         { headerName: "E-mail", field: "email" },
         { headerName: "CEP", field: "cep" },
         { headerName: "RG", field: "rg" },
-        { headerName: "Data de nascimento", field: "data_nascimento" },
+        {
+          headerName: "Data de nascimento", field: "data_nascimento",
+          valueFormatter: function (params) {
+            return params.value == null ? null : new Date(params.value).toLocaleDateString("br");
+          },
+        },
         { headerName: "Empresas", field: "listagemEmpresas" },
         {
           headerName: "Actions",
@@ -78,6 +83,12 @@ export default {
           },
         },
       ],
+      defaultColDef: {
+        flex: 1,
+        minWidth: 120,
+        filter: true,
+        floatingFilter: true,
+      },
       myRowData: [],
       theme: themeAlpine,
     };
