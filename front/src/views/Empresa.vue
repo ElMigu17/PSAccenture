@@ -23,7 +23,7 @@ import { AgGridVue } from "ag-grid-vue3";
 import axios from "axios";
 import { themeAlpine } from "ag-grid-community";
 import TableButton from "../components/TableButton.vue";
-import myForm from "../components/Form.vue";
+import myForm from "../components/FormEmpresa.vue";
 
 export default {
   components: {
