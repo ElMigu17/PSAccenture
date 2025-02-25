@@ -1,6 +1,6 @@
 <script setup></script>
 
-<template >
+<template>
   <div class="empresaView">
     <div class="creationButton">
       <button v-on:click="displayForm">Create</button>
@@ -10,9 +10,8 @@
         :defaultColDef="defaultColDef" domLayout="autoHeight">
       </ag-grid-vue>
       <div class="my-form">
-        <my-form v-model:cnpj="cnpj" v-model:nomeFantasia="nomeFantasia" v-model:cep="cep"
-          v-model:fornecedores="fornecedores" v-model:dataFornecedoresMarcados="dataFornecedoresMarcados"
-          @edit-todo="sendForm" @close="closeForm" />
+        <my-form v-model:dataEmpresasMarcados="dataEmpresasMarcados"
+          v-model:fornecedorManipulated="fornecedorManipulated" @edit-todo="sendForm" @close="closeForm" />
       </div>
     </div>
   </div>
@@ -20,10 +19,11 @@
 
 <script>
 import { AgGridVue } from "ag-grid-vue3";
-import axios from "axios";
 import { themeAlpine } from "ag-grid-community";
 import TableButton from "../components/TableButton.vue";
-import myForm from "../components/FormEmpresa.vue";
+import myForm from "../components/FormFornecedor.vue";
+import EmpresaService from "../services/EmpresaService.js"
+import FornecedorService from "../services/FornecedorService.js"
 
 export default {
   components: {
@@ -33,21 +33,33 @@ export default {
   },
   data() {
     return {
-      cnpj: null,
-      nomeFantasia: null,
-      cep: null,
-      id: null,
-      fornecedores: null,
-      dataFornecedoresMarcados: [],
+      fornecedorManipulated: {
+        cnpj: null,
+        cpf: null,
+        nome: null,
+        email: null,
+        cep: null,
+        id: null,
+        is_pessoa_fisica: null,
+        rg: null,
+        data_nascimento: null,
+        listagemEmpresas: null,
+        empresas: null,
+      },
+      dataEmpresasMarcados: [],
       columnDefs: [
         { sortable: true, filter: true, headerName: "CNPJ", field: "cnpj" },
+        { sortable: true, filter: true, headerName: "CPF", field: "cpf" },
         {
-          headerName: "Nome Fantasia",
-          field: "nomeFantasia",
+          headerName: "Nome",
+          field: "nome",
           filter: "agTextColumnFilter",
         },
+        { headerName: "E-mail", field: "email" },
         { headerName: "CEP", field: "cep" },
-        { headerName: "Fornecedores", field: "listagemFornecedores" },
+        { headerName: "RG", field: "rg" },
+        { headerName: "Data de nascimento", field: "data_nascimento" },
+        { headerName: "Empresas", field: "listagemEmpresas" },
         {
           headerName: "Actions",
           cellRenderer: TableButton,
@@ -71,19 +83,12 @@ export default {
   },
   methods: {
     async getData() {
-      try {
-        axios({
-          method: "get",
-          url: "http://localhost:3000/empresas",
-        }).then((response) => {
-          this.myRowData = response.data;
-        });
-      } catch (error) {
-        console.error("Error sending data:", error);
-      }
+      FornecedorService.getFornecedor().then((response) => {
+        this.myRowData = response.data;
+      });
     },
     sendForm() {
-      if (this.id == null) {
+      if (this.fornecedorManipulated.id == null) {
         this.createRow();
       }
       else {
@@ -91,128 +96,102 @@ export default {
       }
     },
     createRow(event) {
-      console.log(this.dataFornecedoresMarcados);
-      let dataToSend = {
-        cnpj: this.cnpj,
-        nomeFantasia: this.nomeFantasia,
-        cep: this.cep.replace("-", ""),
-        idFornecedores: this.dataFornecedoresMarcados.filter((dfm) => dfm.check).map((dfm) => dfm.id)
-      };
-      try {
-        axios({
-          method: "post",
-          url: "http://localhost:3000/empresas",
-          data: dataToSend,
-        }).then((response) => {
+      let empresas = this.dataEmpresasMarcados.filter((dfm) => dfm.check).map((dfm) => dfm.id);
+
+      FornecedorService.createFornecedor(this.fornecedorManipulated, empresas)
+        .then((response) => {
           let newLineIndex = this.myRowData.push(response.data);
-          let newLine = this.myRowData[newLineIndex-1];
-          newLine.listagemFornecedores = this.createListagemFornecedores(newLine.fornecedores);
+          let newLine = this.myRowData[newLineIndex - 1];
+          newLine.listagemEmpresas = this.createlistagemEmpresas(empresas);
           this.closeForm();
         });
-      } catch (error) {
-        console.error("Error sending data:", error);
-      }
     },
     async deleteRow(data) {
-      try {
-        await axios.delete(`http://localhost:3000/empresas/${data.id}`).then((res) => {
-          this.myRowData = this.myRowData.filter((row) => row.id !== data.id);
-        });
-      } catch (error) {
-        console.error("Error deleting data:", error);
-      }
+      FornecedorService.deleteFornecedor(data.id).then((res) => {
+        this.myRowData = this.myRowData.filter((row) => row.id !== data.id);
+      });
     },
     async editRow() {
-      let fornecedoresFiltrados = this.dataFornecedoresMarcados.filter((dfm) => dfm.check);
+      let empresas = this.dataEmpresasMarcados.filter((dfm) => dfm.check).map((dfm) => dfm.id)
 
-      let dataToSend = {
-        cnpj: this.cnpj,
-        nomeFantasia: this.nomeFantasia,
-        cep: this.cep.replace("-", ""),
-        id: this.id,
-        fornecedores: this.dataFornecedoresMarcados.filter((dfm) => dfm.check).map((dfm) => dfm.id)
-
-      };
-      try {
-        axios({
-          method: "put",
-          url: "http://localhost:3000/empresas",
-          data: dataToSend,
-        }).then((response) => {
+      FornecedorService.updateFornecedor(this.fornecedorManipulated, empresas)
+        .then((response) => {
           let data = response.data;
           let elementToUpdate = this.myRowData.find((row) => row.id === data.id);
-          console.log(elementToUpdate);
-          elementToUpdate.listagemFornecedores = this.createListagemFornecedores(dataToSend.fornecedores);
-          debugger;
-          elementToUpdate.cnpj = data.cnpj;
-          elementToUpdate.nomeFantasia = data.nomeFantasia;
-          elementToUpdate.cep = data.cep;
+
           elementToUpdate.id = data.id;
-          elementToUpdate.fornecedores = dataToSend.fornecedores;
+          elementToUpdate.cnpj = data.cnpj;
+          elementToUpdate.cpf = data.cpf;
+          elementToUpdate.nome = data.nome;
+          elementToUpdate.email = data.email;
+          elementToUpdate.cep = data.cep;
+          elementToUpdate.is_pessoa_fisica = data.is_pessoa_fisica;
+          elementToUpdate.rg = data.rg;
+          elementToUpdate.data_nascimento = data.data_nascimento;
+
+          elementToUpdate.empresas = empresas;
+          elementToUpdate.listagemEmpresas = this.createListagemEmpresas(empresas);
           this.closeForm();
         });
-      } catch (error) {
-        console.error("Error sending data:", error);
-      }
     },
     displayForm() {
 
-      try {
-        axios({
-          method: "get",
-          url: "http://localhost:3000/fornecedor",
-        }).then((response) => {
-          this.dataFornecedoresMarcados = JSON.parse(JSON.stringify(this.fornecedoresMarcados(response)));
-          console.log("dataFornecedoresMarcados", this.dataFornecedoresMarcados);
-          document.getElementsByClassName("my-form")[0].style.display = "block";
-          console.log(this.dataFornecedoresMarcados);
-        });
-      } catch (error) {
-        console.error("Error sending data:", error);
-      }
+      EmpresaService.getEmpresas().then((response) => {
+        this.dataEmpresasMarcados = JSON.parse(JSON.stringify(this.empresasMarcados(response)));
+        document.getElementsByClassName("my-form")[0].style.display = "block";
+      });
     },
     openFormEdit(data) {
-      this.fornecedores = data.fornecedores;
+      this.fornecedorManipulated.empresas = data.empresas;
       this.displayForm();
-
-      this.cnpj = data.cnpj;
-      this.nomeFantasia = data.nomeFantasia;
-      this.cep = data.cep;
-      this.id = data.id;
+      
+      this.fornecedorManipulated.id = data.id;
+      this.fornecedorManipulated.cnpj = data.cnpj;
+      this.fornecedorManipulated.cpf = data.cpf;
+      this.fornecedorManipulated.nome = data.nome;
+      this.fornecedorManipulated.email = data.email;
+      this.fornecedorManipulated.cep = data.cep;
+      this.fornecedorManipulated.is_pessoa_fisica = data.is_pessoa_fisica;
+      this.fornecedorManipulated.rg = data.rg;
+      this.fornecedorManipulated.data_nascimento = data.data_nascimento;
 
     },
 
     closeForm() {
-      this.cnpj = "";
-      this.nomeFantasia = "";
-      this.cep = null;
-      this.id = null;
-      this.fornecedores = [];
-      this.dataFornecedoresMarcados = [];
+      this.fornecedorManipulated.id = null;
+      this.fornecedorManipulated.cnpj = "";
+      this.fornecedorManipulated.cpf = null;
+      this.fornecedorManipulated.nome = "";
+      this.fornecedorManipulated.email = "";
+      this.fornecedorManipulated.cep = null;
+      this.fornecedorManipulated.is_pessoa_fisica = null;
+      this.fornecedorManipulated.rg = "";
+      this.fornecedorManipulated.data_nascimento = null;
+      this.fornecedorManipulated.empresas = [];
+      this.dataEmpresasMarcados = [];
       document.getElementsByClassName("my-form")[0].style.display = "none";
 
     },
-    fornecedoresMarcados(allFornecedores) {
-      let fornecedoresId = [];
-      if (this.fornecedores) {
-        for (let forn of this.fornecedores) {
-          fornecedoresId.push(Number(forn));
+    empresasMarcados(allEmpresas) {
+      let empresasId = [];
+      if (this.fornecedorManipulated.empresas) {
+        for (let emp of this.fornecedorManipulated.empresas) {
+          empresasId.push(Number(emp));
         }
       }
-      for (let forn of allFornecedores.data) {
-        forn.check = fornecedoresId.includes(forn.id);
+      for (let emp of allEmpresas.data) {
+        emp.check = empresasId.includes(emp.id);
       }
-      return allFornecedores.data;
+      return allEmpresas.data;
     },
-    createListagemFornecedores(fornecedoresList){
-      
-      let listagemFornecedores = "";
-      for (let fornecedorIndex in fornecedoresList){
-          let fornecedor = this.dataFornecedoresMarcados[fornecedorIndex];
-          let document = fornecedor.is_pessoa_fisica ? fornecedor.cpf.toString() : fornecedor.cnpj;
-          listagemFornecedores += fornecedor.nome + " - " + document + " ,";
+    createListagemEmpresas(empresasList) {
+
+      let listagemEmpresas = "";
+      for (let empresaIndex in empresasList) {
+        let empresa = this.dataEmpresasMarcados[empresaIndex];
+        listagemEmpresas += empresa.nomeFantasia + " - " +  empresa.cnpj + " ,";
       }
-      return listagemFornecedores !== "" ? listagemFornecedores.substring(0, listagemFornecedores.length - 1) : "";
+      return listagemEmpresas !== "" ? listagemEmpresas.substring(0, listagemEmpresas.length - 1) : "";
     }
   },
   mounted() {
@@ -248,13 +227,12 @@ export default {
 }
 
 button {
-    border-radius: 30px;
-    margin-top: 15px;
-    background-color: black;
-    color: white;
-    border: 2px solid black;
-    padding: 2px 8px;
-    cursor: pointer;
-  }
-
+  border-radius: 30px;
+  margin-top: 15px;
+  background-color: black;
+  color: white;
+  border: 2px solid black;
+  padding: 2px 8px;
+  cursor: pointer;
+}
 </style>

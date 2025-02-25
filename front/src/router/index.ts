@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Empresa from '../views/Empresa.vue';
+import Empresa from "../views/Empresa.vue";
 
 import { ModuleRegistry } from 'ag-grid-community'; 
 import { ClientSideRowModelModule } from 'ag-grid-community'; 
@@ -14,12 +14,12 @@ const router = createRouter({
       component: Empresa,
     },
     {
-      path: '/about',
-      name: 'about',
+      path: '/fornecedor',
+      name: 'Fornecedor',
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue'),
+      component: () => import('../views/Fornecedores.vue'),
     },
   ],
 })

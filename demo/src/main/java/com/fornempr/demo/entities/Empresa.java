@@ -5,6 +5,7 @@ import com.fornempr.demo.DTOs.EmpresaDto;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -27,7 +28,7 @@ public class Empresa {
     private Integer CEP;
     @ManyToMany()
     @JsonBackReference
-    private List<Fornecedor> fornecedor;
+    private List<Fornecedor> fornecedor = new ArrayList<>();
 
     public Empresa(EmpresaDto empresaDto){
         this.id = empresaDto.id;

@@ -45,11 +45,8 @@ public class EmpresaService {
         if(empresaDto.getFornecedores() == null) {
             return this.empresaRepository.save(empresa);
         }
-        Iterable<Fornecedor> fornecedores = fornecedorRepository.findAllById(empresaDto.getFornecedores());
-        List<Fornecedor> fornecedorList = StreamSupport
-                .stream(fornecedores.spliterator(), false)
-                .collect(Collectors.toList());
-        empresa.setFornecedor(fornecedorList);
+        List<Fornecedor> fornecedoresList = (List<Fornecedor>) fornecedorRepository.findAllById(empresaDto.getFornecedores());
+        empresa.setFornecedor(fornecedoresList);
         return this.empresaRepository.save(empresa);
     }
 

@@ -21,7 +21,7 @@ public class Fornecedor {
     @Column(name="id", nullable=false)
     private Integer id;
 
-    @Column(name="cnpj", length=14, nullable=false)
+    @Column(name="cnpj", length=14)
     private String CNPJ;
     @Column(name="nome", nullable=false)
     private String nome;
@@ -31,11 +31,11 @@ public class Fornecedor {
     private Integer CEP;
 
 
-    @Column(name="cpf", nullable=false)
+    @Column(name="cpf")
     private Integer CPF;
-    @Column(name="rg", nullable=false)
+    @Column(name="rg")
     private String rg;
-    @Column(name="data_nascimento", nullable=false)
+    @Column(name="data_nascimento")
     private Date data_nascimento;
     @Column(name="is_pessoa_fisica", nullable=false)
     private Boolean is_pessoa_fisica;
