@@ -22,8 +22,9 @@ import { AgGridVue } from "ag-grid-vue3";
 import { themeAlpine } from "ag-grid-community";
 import TableButton from "../components/TableButton.vue";
 import myForm from "../components/FormFornecedor.vue";
-import EmpresaService from "../services/EmpresaService.js"
-import FornecedorService from "../services/FornecedorService.js"
+import EmpresaService from "../services/EmpresaService.js";
+import FornecedorService from "../services/FornecedorService.js";
+import UtilService from "../services/UtilService.js";
 
 export default {
   components: {
@@ -98,15 +99,22 @@ export default {
     createRow(event) {
       let empresas = this.dataEmpresasMarcados.filter((dfm) => dfm.check).map((dfm) => dfm.id);
 
-      FornecedorService.createFornecedor(this.fornecedorManipulated, empresas)
+      UtilService.verificarCep(this.fornecedorManipulated.cep)
         .then((response) => {
-          let newLineIndex = this.myRowData.push(response.data);
-          let newLine = this.myRowData[newLineIndex - 1];
-          newLine.listagemEmpresas = this.createListagemEmpresas(empresas);
-          this.closeForm();
-        })
-        .catch((err) => {
-          alert(err.response.data.message);
+          if (response.data.erro) {
+            alert("CEP invalid");
+            return;
+          }
+          FornecedorService.createFornecedor(this.fornecedorManipulated, empresas)
+            .then((response) => {
+              let newLineIndex = this.myRowData.push(response.data);
+              let newLine = this.myRowData[newLineIndex - 1];
+              newLine.listagemEmpresas = this.createListagemEmpresas(empresas);
+              this.closeForm();
+            })
+            .catch((err) => {
+              alert(err.response.data.message);
+            })
         });
     },
     async deleteRow(data) {
@@ -117,28 +125,36 @@ export default {
     async editRow() {
       let empresas = this.dataEmpresasMarcados.filter((dfm) => dfm.check).map((dfm) => dfm.id)
 
-      FornecedorService.updateFornecedor(this.fornecedorManipulated, empresas)
+      UtilService.verificarCep(this.fornecedorManipulated.cep)
         .then((response) => {
-          console.log(response);
-          let data = response.data;
-          let elementToUpdate = this.myRowData.find((row) => row.id === data.id);
+          if (response.data.erro) {
+            alert("CEP invalid");
+            return;
+          }
 
-          elementToUpdate.id = data.id;
-          elementToUpdate.cnpj = data.cnpj;
-          elementToUpdate.cpf = data.cpf;
-          elementToUpdate.nome = data.nome;
-          elementToUpdate.email = data.email;
-          elementToUpdate.cep = data.cep;
-          elementToUpdate.is_pessoa_fisica = data.is_pessoa_fisica;
-          elementToUpdate.rg = data.rg;
-          elementToUpdate.data_nascimento = data.data_nascimento;
+          FornecedorService.updateFornecedor(this.fornecedorManipulated, empresas)
+            .then((response) => {
+              console.log(response);
+              let data = response.data;
+              let elementToUpdate = this.myRowData.find((row) => row.id === data.id);
 
-          elementToUpdate.empresas = empresas;
-          elementToUpdate.listagemEmpresas = this.createListagemEmpresas(empresas);
-          this.closeForm();
-        })
-        .catch((err) => {
-          alert(err.response.data.message);
+              elementToUpdate.id = data.id;
+              elementToUpdate.cnpj = data.cnpj;
+              elementToUpdate.cpf = data.cpf;
+              elementToUpdate.nome = data.nome;
+              elementToUpdate.email = data.email;
+              elementToUpdate.cep = data.cep;
+              elementToUpdate.is_pessoa_fisica = data.is_pessoa_fisica;
+              elementToUpdate.rg = data.rg;
+              elementToUpdate.data_nascimento = data.data_nascimento;
+
+              elementToUpdate.empresas = empresas;
+              elementToUpdate.listagemEmpresas = this.createListagemEmpresas(empresas);
+              this.closeForm();
+            })
+            .catch((err) => {
+              alert(err.response.data.message);
+            });
         });
     },
     displayForm() {
@@ -151,7 +167,7 @@ export default {
     openFormEdit(data) {
       this.fornecedorManipulated.empresas = data.empresas;
       this.displayForm();
-      
+
       this.fornecedorManipulated.id = data.id;
       this.fornecedorManipulated.cnpj = data.cnpj;
       this.fornecedorManipulated.cpf = data.cpf;
@@ -196,7 +212,7 @@ export default {
       let listagemEmpresas = "";
       for (let empresaIndex in empresasList) {
         let empresa = this.dataEmpresasMarcados[empresaIndex];
-        listagemEmpresas += empresa.nomeFantasia + " - " +  empresa.cnpj + " ,";
+        listagemEmpresas += empresa.nomeFantasia + " - " + empresa.cnpj + " ,";
       }
       return listagemEmpresas !== "" ? listagemEmpresas.substring(0, listagemEmpresas.length - 1) : "";
     }
