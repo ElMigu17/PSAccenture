@@ -55,7 +55,7 @@ export default {
         let date = null;
         if(fornecedor.data_nascimento != null){
             let d = new Date(fornecedor.data_nascimento)
-            let date = new Date(d.setTime( d.getTime() + d.getTimezoneOffset()*60*1000 ));
+            date = new Date(d.setTime( d.getTime() + d.getTimezoneOffset()*60*1000 ));
         }
         return {
             id: fornecedor.id,

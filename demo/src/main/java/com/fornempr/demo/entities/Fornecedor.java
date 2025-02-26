@@ -40,7 +40,7 @@ public class Fornecedor {
     @Column(name="is_pessoa_fisica", nullable=false)
     private Boolean is_pessoa_fisica;
 
-    @ManyToMany(mappedBy = "fornecedor", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "fornecedor", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JsonBackReference
     private List<Empresa> empresa = new ArrayList<>();
 

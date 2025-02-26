@@ -6,7 +6,8 @@
       <button v-on:click="displayForm">Create</button>
     </div>
     <div class="positionTable">
-      <ag-grid-vue class="aggridEmpresa ag-theme-alpine" :columnDefs="columnDefs" :rowData="myRowData" :theme="themeBalham" :defaultColDef="defaultColDef" domLayout="autoHeight">
+      <ag-grid-vue class="aggridEmpresa ag-theme-alpine" :columnDefs="columnDefs" :rowData="myRowData"
+        :theme="themeBalham" :defaultColDef="defaultColDef" domLayout="autoHeight">
       </ag-grid-vue>
       <div class="my-form">
         <my-form v-model:dataEmpresasMarcados="dataEmpresasMarcados"
@@ -17,7 +18,7 @@
 </template>
 
 <script>
-import { AgGridVue } from "ag-grid-vue3"; 
+import { AgGridVue } from "ag-grid-vue3";
 import TableButton from "../components/TableButton.vue";
 import myForm from "../components/FormFornecedor.vue";
 import EmpresaService from "../services/EmpresaService.js";
@@ -55,18 +56,21 @@ export default {
           field: "nome",
           filter: "agTextColumnFilter"
         },
-        { sortable: true, filter: true, headerName: "CNPJ", field: "cnpj",
+        {
+          sortable: true, filter: true, headerName: "CNPJ", field: "cnpj",
           valueFormatter: function (params) {
-            return params.value!=null ? params.value.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5") : params.value;
+            return params.value != null ? params.value.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5") : params.value;
           },
         },
-        { sortable: true, filter: true, enableFilter: true, headerName: "CPF", field: "cpf",
+        {
+          sortable: true, filter: true, enableFilter: true, headerName: "CPF", field: "cpf",
           valueFormatter: function (params) {
             return params.value != null ? params.value.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4") : params.value;
           },
         },
         { headerName: "E-mail", field: "email" },
-        { headerName: "CEP", field: "cep",
+        {
+          headerName: "CEP", field: "cep",
           valueFormatter: function (params) {
             return params.value != null ? String(params.value).replace(/^(\d{5})(\d{3})/, "$1-$2") : params.value;
           },
@@ -109,6 +113,7 @@ export default {
   methods: {
     async getData() {
       FornecedorService.getFornecedor().then((response) => {
+        debugger;
         this.myRowData = response.data;
       });
     },
@@ -201,13 +206,16 @@ export default {
       this.fornecedorManipulated.cep = data.cep;
       this.fornecedorManipulated.is_pessoa_fisica = data.is_pessoa_fisica;
       this.fornecedorManipulated.rg = data.rg;
-      let datenasc = new Date(data.data_nascimento);
-      let month = datenasc.getMonth() + 1;
-      let dateFromated = (datenasc.getYear() + 1900) + "-" 
-              + (month <=9 ? "0"+month : month) + "-" 
-              + (datenasc.getDate() <=9 ? "0" + datenasc.getDate() : datenasc.getDate());
-      this.fornecedorManipulated.data_nascimento =  dateFromated;
-        
+      letdateFromated = null;
+      if (data.data_nascimento != null) {
+        let datenasc = new Date(data.data_nascimento);
+        let month = datenasc.getMonth() + 1;
+        dateFromated = (datenasc.getYear() + 1900) + "-"
+          + (month <= 9 ? "0" + month : month) + "-"
+          + (datenasc.getDate() <= 9 ? "0" + datenasc.getDate() : datenasc.getDate());
+      }
+      this.fornecedorManipulated.data_nascimento = dateFromated;
+
     },
 
     closeForm() {

@@ -17,6 +17,7 @@ public class FornecedorService {
 
     private EmpresaRepository empresaRepository;
     private final FornecedorRepository fornecedorRepository;
+    private final long adulthoodInMilisecond = 568036800000L;
 
     public FornecedorService(EmpresaRepository empresaRepository, FornecedorRepository fornecedorRepository) {
         this.empresaRepository = empresaRepository;
@@ -49,7 +50,7 @@ public class FornecedorService {
             throw new IllegalArgumentException(errors);
         }
 
-        if(fornecedorDto.getEmpresas() == null) {
+        if(fornecedorDto.getEmpresas() == null || fornecedorDto.getEmpresas().isEmpty()) {
             return this.fornecedorRepository.save(fornecedor);
         }
         List<Empresa> empresaList = (List<Empresa>) empresaRepository.findAllById(fornecedorDto.getEmpresas());
@@ -57,6 +58,7 @@ public class FornecedorService {
             empresa.getFornecedor().add(fornecedor);
         }
 
+        this.fornecedorRepository.save(fornecedor);
         this.empresaRepository.saveAll(empresaList);
         return fornecedor;
     }
@@ -67,6 +69,8 @@ public class FornecedorService {
         if(!errors.isEmpty()){
             throw new IllegalArgumentException(errors);
         }
+        List<Empresa> empresas = (List<Empresa>) this.empresaRepository.findAllById(fornecedorDto.getEmpresas());
+        fornecedor.setEmpresa(empresas);
         Fornecedor oldFornecedor = this.fornecedorRepository.findById(fornecedor.getId()).get();
 
         Set<Integer> empresasAdded = this.empresasInFornecedor1AndNotIn2(fornecedor, oldFornecedor);
@@ -87,7 +91,7 @@ public class FornecedorService {
         empresasToSave.addAll(empresasToRemove);
 
         this.empresaRepository.saveAll(empresasToSave);
-         return this.fornecedorRepository.save(fornecedor);
+         return fornecedor;
     }
 
 
@@ -112,6 +116,22 @@ public class FornecedorService {
         if(this.checkIfCNPJIsUsed(fornecedor.getCNPJ(), fornecedor.getId())){
             errors += "CNPJ already is being used \n";
         }
+
+        if(fornecedor.getIs_pessoa_fisica()) {
+            Date now = new Date();
+            long ageInMilisecond = fornecedor.getData_nascimento().getTime() - now.getTime();
+            if (adulthoodInMilisecond > ageInMilisecond) {
+                for(Empresa empresa : fornecedor.getEmpresa()){
+                    if(empresa.getEstado().equals("Paraná")){
+                        errors += "Due to the empresa being located at Paraná, it can't have a fornecedor with less than 18 years \n";
+                        break;
+                    }
+                }
+            }
+
+        }
+
+
 
         return errors;
     }
