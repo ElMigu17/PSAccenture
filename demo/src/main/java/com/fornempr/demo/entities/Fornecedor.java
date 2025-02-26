@@ -1,7 +1,6 @@
 package com.fornempr.demo.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fornempr.demo.DTOs.EmpresaDto;
 import com.fornempr.demo.DTOs.FornecedorDto;
 import jakarta.persistence.*;
 import lombok.Data;

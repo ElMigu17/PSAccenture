@@ -37,8 +37,8 @@
         </div>
         <br />
         <div class="buttons">
-          <input class="button" type="submit" @click="$emit('edit-todo', event)" />
-          <input class="close-button button" type="button" value="Close" @click="$emit('close', event)" />
+          <input class="button" type="submit" value="Enviar" @click="$emit('edit-todo', event)" />
+          <input class="close-button button" type="button" value="Fechar" @click="$emit('close', event)" />
         </div>
       </form>
     </div>

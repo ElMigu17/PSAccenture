@@ -2,8 +2,6 @@ package com.fornempr.demo.controllers;
 
 import com.fornempr.demo.DTOs.EmpresaDto;
 import com.fornempr.demo.entities.Empresa;
-import com.fornempr.demo.entities.Fornecedor;
-import com.fornempr.demo.repositories.EmpresaRepository;
 import com.fornempr.demo.services.EmpresaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

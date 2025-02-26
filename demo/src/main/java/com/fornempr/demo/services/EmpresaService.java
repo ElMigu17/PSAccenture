@@ -10,8 +10,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 public class EmpresaService {
@@ -60,7 +58,7 @@ public class EmpresaService {
         String errors = "";
 
         if(this.checkIfCNPJIsUsed(empresa.getCNPJ(), empresa.getId())){
-            errors += "CNPJ already is being used \n";
+            errors += "Esse CNPJ já está sendo usado \n";
         }
 
 
@@ -72,7 +70,7 @@ public class EmpresaService {
                 }
                 long ageInMilisecond = fornecedor.getData_nascimento().getTime() - now.getTime();
                 if(adulthoodInMilisecond > ageInMilisecond){
-                    errors += "Due to the empresa being located at Paraná, it can't have a fornecedor with less than 18 years \n";
+                    errors += "Devido ao fato de a empresa ser do Paraná, ela não pode ter um fornecedor com menos de 18 anos \n";
                     break;
                 }
             }

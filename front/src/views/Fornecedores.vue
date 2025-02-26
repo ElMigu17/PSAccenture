@@ -3,7 +3,7 @@
 <template>
   <div class="empresaView">
     <div class="creationButton">
-      <button v-on:click="displayForm">Create</button>
+      <button v-on:click="displayForm">Criar</button>
     </div>
     <div class="positionTable">
       <ag-grid-vue class="aggridEmpresa ag-theme-alpine" :columnDefs="columnDefs" :rowData="myRowData"
@@ -88,7 +88,7 @@ export default {
           cellRenderer: TableButton,
           filter: false,
           cellRendererParams: {
-            label: "Delete",
+            label: "Deletar",
             onClick: (data) => this.deleteRow(data),
           },
         },
@@ -97,7 +97,7 @@ export default {
           cellRenderer: TableButton,
           filter: false,
           cellRendererParams: {
-            label: "Edit",
+            label: "Editar",
             onClick: (data) => this.openFormEdit(data),
           },
         },

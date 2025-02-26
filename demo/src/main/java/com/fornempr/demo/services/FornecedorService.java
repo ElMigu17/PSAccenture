@@ -110,11 +110,12 @@ public class FornecedorService {
     private String validateFornecedor(Fornecedor fornecedor){
         String errors = "";
         if(this.checkCpfIsBeingDuplicated(fornecedor.getCPF(), fornecedor.getId())){
-            errors = "CPF already is being used \n";
+            errors += "Esse CPF já está sendo usado \n";
+
         }
 
         if(this.checkIfCNPJIsUsed(fornecedor.getCNPJ(), fornecedor.getId())){
-            errors += "CNPJ already is being used \n";
+            errors += "Esse CNPJ já está sendo usado \n";
         }
 
         if(fornecedor.getIs_pessoa_fisica()) {
@@ -123,7 +124,7 @@ public class FornecedorService {
             if (adulthoodInMilisecond > ageInMilisecond) {
                 for(Empresa empresa : fornecedor.getEmpresa()){
                     if(empresa.getEstado().equals("Paraná")){
-                        errors += "Due to the empresa being located at Paraná, it can't have a fornecedor with less than 18 years \n";
+                        errors += "Devido ao fato de a empresa ser do Paraná, ela não pode ter um fornecedor com menos de 18 anos \n";
                         break;
                     }
                 }
