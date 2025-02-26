@@ -206,7 +206,7 @@ export default {
       this.fornecedorManipulated.cep = data.cep;
       this.fornecedorManipulated.is_pessoa_fisica = data.is_pessoa_fisica;
       this.fornecedorManipulated.rg = data.rg;
-      letdateFromated = null;
+      let dateFromated = null;
       if (data.data_nascimento != null) {
         let datenasc = new Date(data.data_nascimento);
         let month = datenasc.getMonth() + 1;
@@ -214,6 +214,7 @@ export default {
           + (month <= 9 ? "0" + month : month) + "-"
           + (datenasc.getDate() <= 9 ? "0" + datenasc.getDate() : datenasc.getDate());
       }
+      
       this.fornecedorManipulated.data_nascimento = dateFromated;
 
     },
