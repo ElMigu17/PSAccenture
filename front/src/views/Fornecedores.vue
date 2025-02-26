@@ -113,7 +113,6 @@ export default {
   methods: {
     async getData() {
       FornecedorService.getFornecedor().then((response) => {
-        debugger;
         this.myRowData = response.data;
       });
     },
@@ -164,7 +163,6 @@ export default {
           this.fornecedorManipulated.estado = responseCep.data.estado;
           FornecedorService.updateFornecedor(this.fornecedorManipulated, empresas)
             .then((response) => {
-              console.log(response);
               let data = response.data;
               let elementToUpdate = this.myRowData.find((row) => row.id === data.id);
 
