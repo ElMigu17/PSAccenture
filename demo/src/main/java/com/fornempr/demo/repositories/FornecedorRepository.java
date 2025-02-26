@@ -13,5 +13,5 @@ public interface FornecedorRepository extends CrudRepository<Fornecedor, Integer
 
     @Query("SELECT f FROM Fornecedor as f " +
             "where f.CPF = :cpf" )
-    List<Fornecedor> findByCPF(Integer cpf);
+    List<Fornecedor> findByCPF(String cpf);
 }

@@ -2,14 +2,7 @@ import axios from "axios";
 const url = "http://localhost:3000/empresas";
 export default {
     createEmpresa(empresa, fornecedores) {
-
-        let dataToSend = {
-            cnpj: empresa.cnpj,
-            nomeFantasia: empresa.nomeFantasia,
-            cep: empresa.cep.replace("-", ""),
-            estado: empresa.estado,
-            fornecedores: fornecedores
-        };
+        let dataToSend = this.makeDateToSend(empresa, fornecedores);
 
         try {
             return axios({
@@ -43,16 +36,7 @@ export default {
     },
 
     updateEmpresa(empresa, fornecedores) {
-
-        let dataToSend = {
-            id: empresa.id,
-            cnpj: empresa.cnpj,
-            nomeFantasia: empresa.nomeFantasia,
-            cep: empresa.cep.replace("-", ""),
-            estado: empresa.estado,
-            fornecedores: fornecedores
-        };
-
+        let dataToSend = this.makeDateToSend(empresa, fornecedores);
         try {
             return axios({
                 method: "put",
@@ -63,4 +47,17 @@ export default {
             console.error("Error sending data:", error);
         }
     },
+
+    makeDateToSend(empresa, fornecedores){
+
+
+        return {
+            id: empresa.id,
+            cnpj: empresa.cnpj.replace("-", "").replaceAll(".", "").replace("/", ""),
+            nomeFantasia: empresa.nomeFantasia,
+            cep: empresa.cep.replace("-", ""),
+            estado: empresa.estado,
+            fornecedores: fornecedores
+        };
+    }
 }

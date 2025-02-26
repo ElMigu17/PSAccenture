@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import {AllCommunityModule, ModuleRegistry, themeBalham } from "ag-grid-community";
 import { RouterLink, RouterView } from "vue-router";
+ModuleRegistry.registerModules([AllCommunityModule]);
 </script>
 
 <template>

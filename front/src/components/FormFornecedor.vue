@@ -18,14 +18,13 @@
         <p>Nome:</p>
         <input type="text" v-model="fornecedorManipulated.nome" />
         <p>CNPJ:</p>
-        <input type="text" v-model="fornecedorManipulated.cnpj" />
+        <input placeholder="00.000.000/0000-00" v-mask="'##.###.###/####-##'" type="text" pattern="\w{2}\.\w{3}\.\w{3}\/\w{4}\-\w{2}" v-model="fornecedorManipulated.cnpj"/>
         <p>CPF:</p>
-        <input type="text" v-model="fornecedorManipulated.cpf" />
+        <input placeholder="000.000.000-00" v-mask="'###.###.###-##'" type="text" pattern="\d{3}\.\d{3}\.\d{3}\-\d{2}" v-model="fornecedorManipulated.cpf" />
         <p>E-mail:</p>
-        <input type="text" v-model="fornecedorManipulated.email" />
+        <input type="email" v-model="fornecedorManipulated.email" />
         <p>CEP:</p>
-        <input placeholder="00000-000" maxlength="9" v-mask="'#####-###'" type="text"
-          v-model="fornecedorManipulated.cep" />
+        <input placeholder="00000-000" maxlength="9" v-mask="'#####-###'" pattern="\d{5}\-\d{3}" type="text" v-model="fornecedorManipulated.cep" required/>
         <br />
         <label>
           <input type="checkbox" v-model="fornecedorManipulated.is_pessoa_fisica" />

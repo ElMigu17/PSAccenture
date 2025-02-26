@@ -16,11 +16,11 @@
     <div class="modal">
       <form class="form" v-on:submit.prevent="$emit('send-form')">
         <p>CNPJ:</p>
-        <input type="text" v-model="empresaManipulated.cnpj" />
+        <input placeholder="00.000.000/0000-00" v-mask="'##.###.###/####-##'" type="text" pattern="\w{2}\.\w{3}\.\w{3}\/\w{4}\-\w{2}" v-model="empresaManipulated.cnpj" required/>
         <p>Nome Fantasia:</p>
-        <input type="text" v-model="empresaManipulated.nomeFantasia" />
+        <input type="text" v-model="empresaManipulated.nomeFantasia" required/>
         <p>CEP:</p>
-        <input placeholder="00000-000" maxlength="9" v-mask="'#####-###'" type="text" v-model="empresaManipulated.cep" />
+        <input placeholder="00000-000" maxlength="9" v-mask="'#####-###'" pattern="\d{5}\-\d{3}" type="text" v-model="empresaManipulated.cep" required/>
         <p>Fornecedor:</p>
         <div v-if="props.dataFornecedoresMarcados && props.dataFornecedoresMarcados.length > 0">
           <input type="text" v-model="filtro" />

@@ -11,7 +11,7 @@ import java.util.List;
 public class FornecedorDto {
     public Integer id;
     public String CNPJ;
-    public Integer CPF;
+    public String CPF;
     public String nome;
     public String email;
     public Integer CEP;

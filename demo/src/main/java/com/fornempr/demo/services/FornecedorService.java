@@ -58,7 +58,7 @@ public class FornecedorService {
         }
 
         this.empresaRepository.saveAll(empresaList);
-        return this.fornecedorRepository.save(fornecedor);
+        return fornecedor;
     }
 
     public Fornecedor updateFornecedor(FornecedorDto fornecedorDto) {
@@ -87,7 +87,7 @@ public class FornecedorService {
         empresasToSave.addAll(empresasToRemove);
 
         this.empresaRepository.saveAll(empresasToSave);
-        return this.fornecedorRepository.save(fornecedor);
+         return this.fornecedorRepository.save(fornecedor);
     }
 
 
@@ -116,7 +116,7 @@ public class FornecedorService {
         return errors;
     }
 
-    public boolean checkCpfIsBeingDuplicated(Integer cpf, Integer id){
+    public boolean checkCpfIsBeingDuplicated(String cpf, Integer id){
         List<Fornecedor> fornecedores = this.fornecedorRepository.findByCPF(cpf);
         return !(fornecedores.isEmpty() ||
                 fornecedores.get(0).getId() == id);

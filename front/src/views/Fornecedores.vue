@@ -18,13 +18,11 @@
 
 <script>
 import { AgGridVue } from "ag-grid-vue3"; 
-import {AllCommunityModule, ModuleRegistry, themeBalham } from "ag-grid-community";
 import TableButton from "../components/TableButton.vue";
 import myForm from "../components/FormFornecedor.vue";
 import EmpresaService from "../services/EmpresaService.js";
 import FornecedorService from "../services/FornecedorService.js";
 import UtilService from "../services/UtilService.js";
-ModuleRegistry.registerModules([AllCommunityModule]);
 
 export default {
   components: {
@@ -52,15 +50,27 @@ export default {
       },
       dataEmpresasMarcados: [],
       columnDefs: [
-        { sortable: true, filter: true, headerName: "CNPJ", field: "cnpj" },
-        { sortable: true, filter: true, enableFilter: true, headerName: "CPF", field: "cpf" },
         {
           headerName: "Nome",
           field: "nome",
           filter: "agTextColumnFilter"
         },
+        { sortable: true, filter: true, headerName: "CNPJ", field: "cnpj",
+          valueFormatter: function (params) {
+            return params.value!=null ? params.value.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5") : params.value;
+          },
+        },
+        { sortable: true, filter: true, enableFilter: true, headerName: "CPF", field: "cpf",
+          valueFormatter: function (params) {
+            return params.value != null ? params.value.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4") : params.value;
+          },
+        },
         { headerName: "E-mail", field: "email" },
-        { headerName: "CEP", field: "cep" },
+        { headerName: "CEP", field: "cep",
+          valueFormatter: function (params) {
+            return params.value != null ? String(params.value).replace(/^(\d{5})(\d{3})/, "$1-$2") : params.value;
+          },
+        },
         { headerName: "RG", field: "rg" },
         {
           headerName: "Data de nascimento", field: "data_nascimento",
@@ -72,6 +82,7 @@ export default {
         {
           headerName: "Actions",
           cellRenderer: TableButton,
+          filter: false,
           cellRendererParams: {
             label: "Delete",
             onClick: (data) => this.deleteRow(data),
@@ -80,6 +91,7 @@ export default {
         {
           headerName: "Actions",
           cellRenderer: TableButton,
+          filter: false,
           cellRendererParams: {
             label: "Edit",
             onClick: (data) => this.openFormEdit(data),
@@ -145,7 +157,6 @@ export default {
             return;
           }
           this.fornecedorManipulated.estado = responseCep.data.estado;
-
           FornecedorService.updateFornecedor(this.fornecedorManipulated, empresas)
             .then((response) => {
               console.log(response);
@@ -190,8 +201,13 @@ export default {
       this.fornecedorManipulated.cep = data.cep;
       this.fornecedorManipulated.is_pessoa_fisica = data.is_pessoa_fisica;
       this.fornecedorManipulated.rg = data.rg;
-      this.fornecedorManipulated.data_nascimento = data.data_nascimento;
-
+      let datenasc = new Date(data.data_nascimento);
+      let month = datenasc.getMonth() + 1;
+      let dateFromated = (datenasc.getYear() + 1900) + "-" 
+              + (month <=9 ? "0"+month : month) + "-" 
+              + (datenasc.getDate() <=9 ? "0" + datenasc.getDate() : datenasc.getDate());
+      this.fornecedorManipulated.data_nascimento =  dateFromated;
+        
     },
 
     closeForm() {

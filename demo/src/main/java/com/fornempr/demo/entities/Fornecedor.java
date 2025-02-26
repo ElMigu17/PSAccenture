@@ -32,7 +32,7 @@ public class Fornecedor {
 
 
     @Column(name="cpf")
-    private Integer CPF;
+    private String CPF;
     @Column(name="rg")
     private String rg;
     @Column(name="data_nascimento")
@@ -40,7 +40,7 @@ public class Fornecedor {
     @Column(name="is_pessoa_fisica", nullable=false)
     private Boolean is_pessoa_fisica;
 
-    @ManyToMany(mappedBy = "fornecedor")
+    @ManyToMany(mappedBy = "fornecedor", cascade = CascadeType.ALL)
     @JsonBackReference
     private List<Empresa> empresa = new ArrayList<>();
 

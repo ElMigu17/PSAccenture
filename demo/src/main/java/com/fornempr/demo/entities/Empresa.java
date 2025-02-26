@@ -28,7 +28,7 @@ public class Empresa {
     private Integer CEP;
     @Column(name="estado", nullable=false)
     private String estado;
-    @ManyToMany()
+    @ManyToMany(cascade = CascadeType.ALL)
     @JsonBackReference
     private List<Fornecedor> fornecedor = new ArrayList<>();
 

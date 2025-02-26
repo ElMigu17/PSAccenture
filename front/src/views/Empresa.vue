@@ -6,7 +6,7 @@
       <button v-on:click="displayForm">Create</button>
     </div>
     <div class="positionTable">
-      <ag-grid-vue class="aggridEmpresa ag-theme-alpine" :columnDefs="columnDefs" :rowData="myRowData" :theme="theme"
+      <ag-grid-vue class="aggridEmpresa ag-theme-alpine" :columnDefs="columnDefs" :rowData="myRowData" :theme="themeBalham"
         :defaultColDef="defaultColDef" domLayout="autoHeight">
       </ag-grid-vue>
       <div class="my-form">
@@ -19,12 +19,12 @@
 
 <script>
 import { AgGridVue } from "ag-grid-vue3";
-import { themeAlpine } from "ag-grid-community";
 import TableButton from "../components/TableButton.vue";
 import myForm from "../components/FormEmpresa.vue";
 import EmpresaService from "../services/EmpresaService.js"
 import FornecedorService from "../services/FornecedorService.js"
 import UtilService from "../services/UtilService.js"
+
 
 export default {
   components: {
@@ -43,13 +43,21 @@ export default {
       },
       dataFornecedoresMarcados: [],
       columnDefs: [
-        { sortable: true, filter: true, headerName: "CNPJ", field: "cnpj" },
+        { sortable: true, filter: true, headerName: "CNPJ", field: "cnpj",
+          valueFormatter: function (params) {
+            return params.value!=null ? params.value.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5") : params.value;
+          },
+        },
         {
           headerName: "Nome Fantasia",
           field: "nomeFantasia",
           filter: "agTextColumnFilter",
         },
-        { headerName: "CEP", field: "cep" },
+        { headerName: "CEP", field: "cep",
+          valueFormatter: function (params) {
+            return params.value != null ? String(params.value).replace(/^(\d{5})(\d{3})/, "$1-$2") : params.value;
+          },
+        },
         { headerName: "Fornecedores", field: "listagemFornecedores" },
         {
           headerName: "Actions",
@@ -69,7 +77,6 @@ export default {
         },
       ],
       myRowData: [],
-      theme: themeAlpine,
     };
   },
   methods: {
