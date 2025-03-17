@@ -25,7 +25,7 @@ public class Empresa {
     @Column(name="nome_fantasia", nullable=false)
     private String nomeFantasia;
     @Column(name="CEP", nullable=false)
-    private Integer CEP;
+    private String CEP;
     @Column(name="estado", nullable=false)
     private String estado;
     @ManyToMany()

@@ -11,7 +11,7 @@ public class EmpresaDto {
     public Integer id;
     public String CNPJ;
     public String nomeFantasia;
-    public Integer CEP;
+    public String CEP;
     public String estado;
     public String listagemFornecedores;
     public List<Integer> fornecedores;
